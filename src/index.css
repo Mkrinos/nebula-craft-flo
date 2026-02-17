@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 15% 6%;
+    --foreground: 240 10% 90%;
+    --card: 240 15% 10%;
+    --card-foreground: 240 10% 90%;
+    --popover: 240 15% 10%;
+    --popover-foreground: 240 10% 90%;
+    --primary: 263 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 15% 15%;
+    --secondary-foreground: 240 10% 90%;
+    --muted: 240 15% 15%;
+    --muted-foreground: 240 10% 55%;
+    --accent: 190 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 15% 18%;
+    --input: 240 15% 18%;
+    --ring: 263 100% 65%;
+    --radius: 0.75rem;
+
+    --neon-purple: 263 100% 65%;
+    --neon-cyan: 190 100% 50%;
+    --neon-blue: 220 100% 60%;
+    --neon-pink: 330 100% 65%;
+
+    --space-dark: 240 15% 4%;
+    --space-card: 240 15% 10%;
+    --space-elevated: 240 15% 14%;
+
+    --font-display: 'Space Grotesk', sans-serif;
+
+    --sidebar-background: 240 15% 8%;
+    --sidebar-foreground: 240 10% 90%;
+    --sidebar-primary: 263 100% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 15% 15%;
+    --sidebar-accent-foreground: 240 10% 90%;
+    --sidebar-border: 240 15% 18%;
+    --sidebar-ring: 263 100% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(240 15% 8%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(263 100% 65% / 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(263 100% 65% / 0.5);
+}
+
+/* Safe area padding for PWA */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
