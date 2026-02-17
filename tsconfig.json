@@ -1,0 +1,32 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    // Enable these GRADUALLY (comment out initially)
+    // "strict": true,
+    "noImplicitAny": true, // START HERE
+    // "strictNullChecks": true,  // ENABLE WEEK 2
+    // "strictFunctionTypes": true,
+    // "strictBindCallApply": true,
+    // Keep these for now
+    "skipLibCheck": true,
+    "allowJs": true,
+    // Add paths for cleaner imports
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@/types/*": [
+        "./src/types/*"
+      ]
+    }
+  }
+}
