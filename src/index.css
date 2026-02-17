@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Exo+2:wght@400;500;600;700&family=Share+Tech+Mono&family=Roboto+Mono:wght@400;500;600&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Press+Start+2P&family=VT323&family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,83 +6,973 @@
 
 @layer base {
   :root {
-    --background: 240 15% 6%;
-    --foreground: 240 10% 90%;
-    --card: 240 15% 10%;
-    --card-foreground: 240 10% 90%;
-    --popover: 240 15% 10%;
-    --popover-foreground: 240 10% 90%;
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
+
     --primary: 263 100% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 15% 15%;
-    --secondary-foreground: 240 10% 90%;
-    --muted: 240 15% 15%;
-    --muted-foreground: 240 10% 55%;
-    --accent: 190 100% 50%;
+
+    --secondary: 240 10% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 186 100% 50%;
+    --accent-foreground: 240 10% 4%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 10% 20%;
+    --input: 240 10% 20%;
+    --ring: 263 100% 65%;
+
+    --radius: 1.875rem;
+
+    /* Custom cyberpunk colors */
+    --neon-purple: 263 100% 65%;
+    --neon-cyan: 186 100% 50%;
+    --neon-blue: 228 76% 66%;
+    --neon-pink: 320 100% 60%;
+    --space-dark: 240 10% 4%;
+    --space-card: 240 10% 8%;
+    --space-elevated: 240 10% 12%;
+
+    /* Glassmorphism */
+    --glass-bg: 240 10% 10% / 60%;
+    --glass-border: 0 0% 100% / 10%;
+    --glass-blur: 20px;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(263 100% 65%), hsl(228 76% 66%));
+    --gradient-accent: linear-gradient(135deg, hsl(186 100% 50%), hsl(263 100% 65%));
+    --gradient-glow: radial-gradient(ellipse at center, hsl(263 100% 65% / 0.3), transparent 70%);
+
+    /* Shadows */
+    --shadow-neon-purple: 0 0 20px hsl(263 100% 65% / 0.5), 0 0 40px hsl(263 100% 65% / 0.3);
+    --shadow-neon-cyan: 0 0 20px hsl(186 100% 50% / 0.5), 0 0 40px hsl(186 100% 50% / 0.3);
+
+    --sidebar-background: 240 10% 6%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 263 100% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 10% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 10% 20%;
+    --sidebar-ring: 263 100% 65%;
+
+    --chart-1: 263 100% 65%;
+    --chart-2: 186 100% 50%;
+    --chart-3: 228 76% 66%;
+    --chart-4: 320 100% 60%;
+    --chart-5: 45 100% 60%;
+
+    /* Persona theme tokens (dynamically set via JS) */
+    --persona-accent-glow: hsl(186 100% 50%);
+    --persona-glow-intensity: 0.3;
+
+    /* Motion settings */
+    --motion-duration: 300ms;
+
+    --font-sans: 'Space Grotesk', 'Rajdhani', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Orbitron', ui-sans-serif, system-ui, sans-serif;
+    --shadow-sm: 0px 1px 1.5px 0px hsla(0, 0%, 0%, 0.27);
+    --shadow: 0px 1px 3px 0px hsla(0, 0%, 0%, 0.27);
+    --shadow-md: 0px 1px 4.5px 0px hsla(0, 0%, 0%, 0.27);
+    --shadow-lg: 0px 1px 7.5px 0px hsla(0, 0%, 0%, 0.27);
+  }
+
+  /* ========== UI Theme: Sci-Fi (Default) ========== */
+  [data-ui-theme="scifi"] {
+    --background: 222 47% 4%;
+    --foreground: 210 40% 80%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 80%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 80%;
+    --primary: 193 100% 50%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 222 47% 15%;
+    --secondary-foreground: 210 40% 80%;
+    --muted: 222 47% 15%;
+    --muted-foreground: 210 30% 60%;
+    --accent: 193 100% 50%;
+    --accent-foreground: 222 47% 4%;
+    --border: 222 47% 20%;
+    --input: 222 47% 20%;
+    --ring: 193 100% 50%;
+    --font-sans: 'Share Tech Mono', 'Exo 2', monospace;
+    --font-display: 'Exo 2', sans-serif;
+    --radius: 0.25rem;
+  }
+
+  /* ========== UI Theme: Cyberpunk ========== */
+  [data-ui-theme="cyberpunk"] {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 56 97% 51%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 186 100% 50%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 186 100% 50%;
+    --input: 0 0% 15%;
+    --ring: 56 97% 51%;
+    --font-sans: 'Roboto Mono', monospace;
+    --font-display: 'Orbitron', sans-serif;
+    --radius: 0;
+    --neon-primary: 56 97% 51%;
+    --neon-secondary: 186 100% 50%;
+    --shadow-neon-primary: 0 0 10px hsl(56 97% 51% / 0.5), 0 0 20px hsl(56 97% 51% / 0.3);
+    --shadow-neon-secondary: 0 0 10px hsl(186 100% 50% / 0.5), 0 0 20px hsl(186 100% 50% / 0.3);
+  }
+
+  /* ========== UI Theme: Abstract ========== */
+  [data-ui-theme="abstract"] {
+    --background: 220 20% 98%;
+    --foreground: 200 10% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 200 10% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 10% 15%;
+    --primary: 0 84% 71%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 169 62% 55%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 15% 92%;
+    --muted-foreground: 200 10% 40%;
+    --accent: 169 62% 55%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 15% 18%;
-    --input: 240 15% 18%;
+    --border: 200 10% 20%;
+    --input: 220 15% 95%;
+    --ring: 0 84% 71%;
+    --font-sans: 'Nunito', sans-serif;
+    --font-display: 'Poppins', sans-serif;
+    --radius: 1.25rem;
+  }
+
+  /* ========== UI Theme: Minimal ========== */
+  [data-ui-theme="minimal"] {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
+    --card: 0 0% 97%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 0% 0%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 88%;
+    --input: 0 0% 96%;
+    --ring: 0 0% 0%;
+    --font-sans: 'Inter', sans-serif;
+    --font-display: 'Inter', sans-serif;
+    --radius: 0.25rem;
+  }
+
+  /* ========== UI Theme: Dark Mode (OLED-Optimized) ========== */
+  [data-ui-theme="darkmode"] {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 211 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 250 57% 63%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 11%;
+    --muted-foreground: 0 0% 56%;
+    --accent: 211 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 18%;
+    --input: 0 0% 11%;
+    --ring: 211 100% 52%;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --radius: 0.5rem;
+  }
+
+  /* ========== UI Theme: Vaporwave ========== */
+  [data-ui-theme="vaporwave"] {
+    --background: 270 67% 11%;
+    --foreground: 186 100% 50%;
+    --card: 270 50% 20%;
+    --card-foreground: 186 100% 50%;
+    --popover: 270 50% 20%;
+    --popover-foreground: 186 100% 50%;
+    --primary: 324 100% 72%;
+    --primary-foreground: 270 67% 11%;
+    --secondary: 186 100% 50%;
+    --secondary-foreground: 270 67% 11%;
+    --muted: 270 50% 25%;
+    --muted-foreground: 290 60% 75%;
+    --accent: 275 100% 70%;
+    --accent-foreground: 270 67% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 324 100% 72%;
+    --input: 270 50% 20%;
+    --ring: 324 100% 72%;
+    --font-sans: 'VT323', 'Courier New', monospace;
+    --font-display: 'Press Start 2P', cursive;
+    --radius: 0;
+  }
+
+  /* ========== UI Theme: Art Deco ========== */
+  [data-ui-theme="artdeco"] {
+    --background: 60 18% 97%;
+    --foreground: 0 0% 18%;
+    --card: 60 100% 97%;
+    --card-foreground: 0 0% 18%;
+    --popover: 60 100% 97%;
+    --popover-foreground: 0 0% 18%;
+    --primary: 43 74% 52%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 145 53% 63%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 60 10% 92%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 43 74% 52%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 43 74% 52%;
+    --input: 60 18% 95%;
+    --ring: 43 74% 52%;
+    --font-sans: 'Montserrat', sans-serif;
+    --font-display: 'Playfair Display', serif;
+    --radius: 0.125rem;
+  }
+
+  /* ========== UI Theme: Nature Organic ========== */
+  [data-ui-theme="nature"] {
+    --background: 42 43% 97%;
+    --foreground: 14 32% 19%;
+    --card: 40 30% 90%;
+    --card-foreground: 14 32% 19%;
+    --popover: 42 43% 97%;
+    --popover-foreground: 14 32% 19%;
+    --primary: 100 56% 20%;
+    --primary-foreground: 42 43% 97%;
+    --secondary: 93 22% 61%;
+    --secondary-foreground: 14 32% 19%;
+    --muted: 40 30% 88%;
+    --muted-foreground: 14 20% 40%;
+    --accent: 100 56% 20%;
+    --accent-foreground: 42 43% 97%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 93 22% 50%;
+    --input: 40 30% 92%;
+    --ring: 100 56% 20%;
+    --font-sans: 'Open Sans', sans-serif;
+    --font-display: 'Lora', serif;
+    --radius: 1rem;
+  }
+
+  /* ========== UI Theme: Gaming RGB ========== */
+  [data-ui-theme="gaming"] {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 280 100% 53%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 60 100% 50%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 280 100% 53%;
+    --input: 0 0% 12%;
+    --ring: 0 100% 50%;
+    --font-sans: 'Exo 2', sans-serif;
+    --font-display: 'Rajdhani', sans-serif;
+    --radius: 0.25rem;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 263 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 186 100% 50%;
+    --accent-foreground: 240 10% 4%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 10% 20%;
+    --input: 240 10% 20%;
     --ring: 263 100% 65%;
-    --radius: 0.75rem;
-
-    --neon-purple: 263 100% 65%;
-    --neon-cyan: 190 100% 50%;
-    --neon-blue: 220 100% 60%;
-    --neon-pink: 330 100% 65%;
-
-    --space-dark: 240 15% 4%;
-    --space-card: 240 15% 10%;
-    --space-elevated: 240 15% 14%;
-
-    --font-display: 'Space Grotesk', sans-serif;
-
-    --sidebar-background: 240 15% 8%;
-    --sidebar-foreground: 240 10% 90%;
-    --sidebar-primary: 263 100% 65%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 15% 15%;
-    --sidebar-accent-foreground: 240 10% 90%;
-    --sidebar-border: 240 15% 18%;
-    --sidebar-ring: 263 100% 65%;
+    --radius: 1.875rem;
+    --shadow-sm: 0px 1px 1.5px 0px hsla(0, 0%, 0%, 0.27);
+    --shadow: 0px 1px 3px 0px hsla(0, 0%, 0%, 0.27);
+    --shadow-md: 0px 1px 4.5px 0px hsla(0, 0%, 0%, 0.27);
+    --shadow-lg: 0px 1px 7.5px 0px hsla(0, 0%, 0%, 0.27);
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    /* Prevent text size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth touch scrolling */
+    -webkit-overflow-scrolling: touch;
   }
+
+  html {
+    /* iOS safe area support */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: transparent;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior-y: contain;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* Minimum touch target sizing */
+    --min-touch-target: 44px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+
+  /* Ensure tap targets meet accessibility guidelines (44px min) */
+  button, a, [role="button"], input, select, textarea {
+    min-height: var(--min-touch-target);
+  }
+  
+  /* Exception for icon-only buttons that explicitly set size */
+  button[class*="size-icon"], [class*="w-9"], [class*="w-10"], [class*="h-9"], [class*="h-10"] {
+    min-height: auto;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply relative overflow-hidden rounded-xl border border-border/30 backdrop-blur-xl;
+    background: hsl(var(--glass-bg));
+  }
+
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 rounded-xl;
+    background: linear-gradient(135deg, hsl(0 0% 100% / 0.1), transparent 50%);
+    pointer-events: none;
+  }
+
+  .neon-glow {
+    box-shadow: var(--shadow-neon-purple);
+  }
+
+  .neon-glow-cyan {
+    box-shadow: var(--shadow-neon-cyan);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .text-gradient-accent {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-accent);
+  }
+
+  .btn-primary-glow {
+    @apply relative overflow-hidden;
+    background: var(--gradient-primary);
+  }
+
+  .btn-primary-glow::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: var(--gradient-accent);
+  }
+
+  .btn-primary-glow:hover::before {
+    @apply opacity-100;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* Persona-driven glow effect */
+  .persona-glow {
+    box-shadow: 0 0 calc(20px * var(--persona-glow-intensity)) var(--persona-accent-glow),
+                0 0 calc(40px * var(--persona-glow-intensity)) var(--persona-accent-glow);
+  }
+}
+
+/* Reduced motion fallback */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+.reduce-motion .animate-float,
+.reduce-motion .animate-pulse-glow,
+.reduce-motion .animate-shimmer,
+.reduce-motion .animate-twinkle {
+  animation: none !important;
+}
+
+/* Preserve essential interactions in reduced motion mode */
+.reduce-motion button,
+.reduce-motion a,
+.reduce-motion [role="button"] {
+  transition-duration: 150ms !important;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* iOS safe area utilities */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+  .safe-x {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .safe-y {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-all {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  
+  /* Mobile-first responsive text */
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm;
+  }
+  .text-responsive-base {
+    @apply text-sm sm:text-base;
+  }
+  .text-responsive-lg {
+    @apply text-base sm:text-lg md:text-xl;
+  }
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+  .text-responsive-2xl {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+  .text-responsive-3xl {
+    @apply text-2xl sm:text-3xl md:text-4xl;
+  }
+  .text-responsive-4xl {
+    @apply text-3xl sm:text-4xl md:text-5xl;
+  }
+  
+  /* Touch-friendly spacing */
+  .touch-padding {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+  .touch-gap {
+    @apply gap-3 sm:gap-4 md:gap-6;
+  }
+  
+  /* GPU acceleration for smoother animations on mobile */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform;
+  }
+  
+  /* Touch interaction optimization */
+  .touch-none {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  .touch-manipulation {
     touch-action: manipulation;
   }
+  
+  /* Prevent color shifting from filters on mobile */
+  .color-stable {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    image-rendering: -webkit-optimize-contrast;
+  }
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: hsl(240 15% 8%);
-}
-::-webkit-scrollbar-thumb {
-  background: hsl(263 100% 65% / 0.3);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(263 100% 65% / 0.5);
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
 }
 
-/* Safe area padding for PWA */
-.safe-area-top {
-  padding-top: env(safe-area-inset-top);
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px hsl(263 100% 65% / 0.5), 0 0 40px hsl(263 100% 65% / 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 30px hsl(263 100% 65% / 0.7), 0 0 60px hsl(263 100% 65% / 0.5);
+  }
 }
-.safe-area-bottom {
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes flutter {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-3deg) scale(1.02); }
+  50% { transform: rotate(0deg) scale(1); }
+  75% { transform: rotate(3deg) scale(1.02); }
+}
+
+/* ========== Motion Settings - Reduce Motion ========== */
+.reduce-motion,
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Performance mode: minimal - hide glow and particles */
+.reduce-motion .glow-effect,
+.reduce-motion [class*="shadow-neon"],
+.reduce-motion [class*="animate-pulse"],
+.reduce-motion [class*="animate-float"] {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+/* Performance mode: reduced - fewer effects but keep some glow */
+html:not(.reduce-motion)[data-performance-mode="reduced"] [class*="animate-pulse"],
+html:not(.reduce-motion)[data-performance-mode="reduced"] .particles-container {
+  display: none !important;
+}
+
+/* Performance mode: full - all effects enabled (default) */
+html[data-performance-mode="full"] {
+  --motion-duration: 300ms;
+}
+
+/* ========== Device-Specific Styles ========== */
+
+/* Mobile device optimizations */
+html.is-mobile {
+  /* Larger touch targets */
+  --min-touch-target: 48px;
+  /* Slightly larger text for readability */
+  font-size: 16px;
+}
+
+html.is-mobile body {
+  /* Prevent accidental zoom on double-tap */
+  touch-action: manipulation;
+  /* Prevent text selection on UI elements */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in content areas */
+html.is-mobile article,
+html.is-mobile .selectable,
+html.is-mobile input,
+html.is-mobile textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Tablet optimizations */
+html.is-tablet {
+  --min-touch-target: 44px;
+}
+
+/* Touch device optimizations */
+html.is-touch {
+  /* Disable hover states that cause issues on touch */
+  --hover-opacity: 1;
+}
+
+/* Remove hover effects on touch devices to prevent sticky states */
+@media (hover: none) {
+  .hover\:scale-105:hover,
+  .hover\:brightness-110:hover {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* iOS-specific fixes */
+html.is-ios {
+  /* Prevent iOS bounce effect */
+  overscroll-behavior: none;
+  /* Fix 100vh issue on iOS */
+  height: -webkit-fill-available;
+}
+
+html.is-ios body {
+  min-height: -webkit-fill-available;
+}
+
+/* Android-specific optimizations - all versions */
+html.is-android {
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  /* Fix for Android Chrome address bar */
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+html.is-android body {
+  /* Ensure proper touch handling */
+  touch-action: manipulation;
+  /* Prevent pull-to-refresh conflicts with custom implementation */
+  overscroll-behavior-y: contain;
+}
+
+/* Samsung One UI / Android 10+ gesture navigation support */
+html.is-android .safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+}
+
+/* Fix for Android tablets */
+html.is-android.is-tablet {
+  --min-touch-target: 48px;
+}
+
+/* Standalone/PWA mode adjustments */
+html.is-standalone {
+  /* Account for notch/status bar */
+  --status-bar-height: env(safe-area-inset-top, 20px);
+}
+
+html.is-standalone body {
+  padding-top: var(--status-bar-height);
+}
+
+/* Orientation-specific styles */
+html[data-orientation="portrait"] {
+  --layout-direction: column;
+}
+
+html[data-orientation="landscape"] {
+  --layout-direction: row;
+}
+
+/* Full-screen mobile layout */
+.mobile-fullscreen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Responsive container that fills screen on mobile */
+.container-adaptive {
+  width: 100%;
+  max-width: 100%;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+@media (min-width: 640px) {
+  .container-adaptive {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-adaptive {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-adaptive {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-adaptive {
+    max-width: 1280px;
+  }
+}
+
+/* Ensure videos and images fill container properly on mobile */
+html.is-mobile video,
+html.is-mobile .video-container video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fix for input zoom on iOS (font-size < 16px causes zoom) */
+html.is-ios input,
+html.is-ios select,
+html.is-ios textarea {
+  font-size: 16px !important;
+}
+
+/* Smooth scrolling containers on mobile */
+.scroll-smooth-mobile {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Hide scrollbars on mobile for cleaner look */
+html.is-mobile .hide-scrollbar-mobile::-webkit-scrollbar {
+  display: none;
+}
+
+html.is-mobile .hide-scrollbar-mobile {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Optimized touch feedback */
+.touch-feedback {
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+.touch-feedback:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+/* GPU-optimized animations for mobile */
+.gpu-transform {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Prevent layout shift during loading */
+.stable-layout {
+  contain: layout style;
+}
+
+/* ========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ======================================== */
+
+/* High Contrast Mode */
+[data-high-contrast="true"] {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 85%;
+  --border: 0 0% 40%;
+  --primary: 263 100% 70%;
+  --accent: 186 100% 60%;
+}
+
+[data-high-contrast="true"] * {
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+[data-high-contrast="true"] button,
+[data-high-contrast="true"] a,
+[data-high-contrast="true"] [role="button"] {
+  border: 2px solid currentColor !important;
+}
+
+/* Enhanced Focus Indicators */
+[data-enhanced-focus="true"] *:focus-visible {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 6px hsl(var(--primary) / 0.25) !important;
+}
+
+[data-enhanced-focus="true"] a:focus-visible,
+[data-enhanced-focus="true"] button:focus-visible,
+[data-enhanced-focus="true"] [role="button"]:focus-visible {
+  outline-width: 4px !important;
+}
+
+/* Screen Reader Optimizations */
+[data-sr-optimized="true"] .decorative,
+[data-sr-optimized="true"] [aria-hidden="true"]:not([role]) {
+  visibility: hidden;
+}
+
+/* Font Scale Support */
+:root {
+  --font-scale: 1;
+}
+
+html {
+  font-size: calc(1rem * var(--font-scale, 1));
+}
+
+/* Skip Navigation Styles */
+.skip-navigation a:focus {
+  position: fixed !important;
+  top: 0.5rem !important;
+  left: 0.5rem !important;
+  z-index: 9999 !important;
+  clip: auto !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Reduced Motion (already exists but ensure complete coverage) */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Keyboard navigation focus trap indicator */
+[data-focus-trap="true"] {
+  outline: 2px dashed hsl(var(--primary) / 0.5);
+  outline-offset: 4px;
+}
+
+/* Screen reader only announcement region */
+#route-announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area padding for mobile devices */
+.safe-area-inset {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile viewport fit */
+@supports (padding: max(0px)) {
+  .mobile-viewport-fit {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Touch scroll momentum */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* Performance mode specific styles */
+[data-performance-mode="minimal"] .animate-pulse,
+[data-performance-mode="minimal"] .animate-spin,
+[data-performance-mode="minimal"] .animate-bounce {
+  animation: none !important;
+}
+
+[data-performance-mode="minimal"] [class*="animate-"] {
+  animation-duration: 0.01ms !important;
+}
+
+[data-performance-mode="reduced"] .animate-pulse {
+  animation-duration: 4s !important;
 }

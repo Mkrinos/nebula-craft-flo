@@ -3,6 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     
+    <!-- Content Security Policy - XSS Protection -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://fonts.gstatic.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com data:;
+      img-src 'self' data: blob: https: http:;
+      media-src 'self' blob: https: data:;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://fonts.googleapis.com https://fonts.gstatic.com;
+      frame-src 'self' https://*.stripe.com;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      upgrade-insecure-requests;
+    ">
+    
     <!-- Additional Security Headers via Meta Tags -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
@@ -41,16 +57,14 @@
     <meta name="keywords" content="AI, image generation, creative, art, personas, NexusTouch">
 
     <!-- Open Graph -->
+    
+    
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="NexusTouch - AI Creative Journey">
-    <meta property="og:description" content="Transform your imagination into stunning visuals with NexusTouch AI-powered creative platform. Generate images, create personas, and explore endless possibilities.">
     <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/e9gNKt9RZ8NLcOrRw4PXuxdOr5I3/social-images/social-1767506983780-ChatGPT Image Oct 16, 2025, 04_45_11 PM.png">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@NexusTouch" />
-    <meta name="twitter:title" content="NexusTouch - AI Creative Journey">
-    <meta name="twitter:description" content="Transform your imagination into stunning visuals with NexusTouch AI-powered creative platform. Generate images, create personas, and explore endless possibilities.">
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/e9gNKt9RZ8NLcOrRw4PXuxdOr5I3/social-images/social-1767506983780-ChatGPT Image Oct 16, 2025, 04_45_11 PM.png">
     
     <!-- Preconnect for performance -->
@@ -59,9 +73,14 @@
     
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" sizes="192x192" href="/pwa-icon-192.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="/pwa-icon-512.png" />
-  </head>
+    <meta property="og:title" content="NexusTouch - AI Creative Journey">
+  <meta name="twitter:title" content="NexusTouch - AI Creative Journey">
+  <meta property="og:description" content="Transform your imagination into stunning visuals with NexusTouch AI-powered creative platform. Generate images, create personas, and explore endless possibilities.">
+  <meta name="twitter:description" content="Transform your imagination into stunning visuals with NexusTouch AI-powered creative platform. Generate images, create personas, and explore endless possibilities.">
+</head>
 
   <body>
     <div id="root"></div>

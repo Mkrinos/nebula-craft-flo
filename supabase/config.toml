@@ -1,1 +1,37 @@
 project_id = "powssiykpmcmkixurodu"
+
+[functions.generate-image]
+verify_jwt = false
+
+[functions.enhance-prompt]
+verify_jwt = false
+
+[functions.generate-persona-avatar]
+verify_jwt = false
+
+[functions.elevenlabs-tts]
+verify_jwt = false
+
+[functions.public-greeting]
+verify_jwt = false
+
+[functions.send-feedback-notification]
+verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.customer-portal]
+verify_jwt = false
+
+[functions.check-low-credits]
+verify_jwt = false
+
+[functions.moderate-comment]
+verify_jwt = false
+
+[functions.check-breached-password]
+verify_jwt = false
