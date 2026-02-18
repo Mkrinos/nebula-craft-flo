@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import nexusLogoVideo from '@/assets/nexus-logo-animation.mp4';
 
 interface NexusLogoProps {
   className?: string;
@@ -15,14 +16,16 @@ const NexusLogo = ({ className, showText = true, size = 'md' }: NexusLogoProps) 
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <div className={cn('relative', sizes[size].icon)} style={{ willChange: 'transform' }}>
-        {/* Outer ring */}
-        <div className="absolute inset-0 rounded-full border-2 border-primary animate-spin-slow" style={{ willChange: 'transform' }} />
-        {/* Inner glow */}
-        <div className="absolute inset-1 rounded-full bg-gradient-to-br from-primary to-accent opacity-80" />
-        {/* Center dot */}
-        <div className="absolute inset-3 rounded-full bg-background" />
-        <div className="absolute inset-[14px] rounded-full bg-primary animate-pulse" style={{ willChange: 'opacity' }} />
+      <div className={cn('relative overflow-hidden rounded-full', sizes[size].icon)}>
+        <video
+          src={nexusLogoVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          style={{ mixBlendMode: 'screen' }}
+        />
       </div>
       {showText && (
         <div className="flex flex-col leading-none">
