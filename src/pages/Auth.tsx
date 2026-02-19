@@ -18,6 +18,7 @@ import mx2kLogo from '@/assets/mx2k-logo.png';
 import logoAnimation from '@/assets/logo-animation.mp4';
 import PasswordStrengthIndicator, { isPasswordStrong } from '@/components/PasswordStrengthIndicator';
 import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable/index';
 
 const emailSchema = z.string().email('Please enter a valid email');
 const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
@@ -1545,14 +1546,11 @@ const Auth = () => {
               shape="angled"
               className="w-full group touch-target mb-4"
               onClick={async () => {
-                const { error } = await supabase.auth.signInWithOAuth({
-                  provider: 'google',
-                  options: {
-                    redirectTo: `${window.location.origin}/dashboard`
-                  }
+                const result = await lovable.auth.signInWithOAuth('google', {
+                  redirect_uri: window.location.origin,
                 });
-                if (error) {
-                  toast.error(error.message);
+                if (result?.error) {
+                  toast.error(result.error.message || 'Google sign-in failed');
                 }
               }}
             >
