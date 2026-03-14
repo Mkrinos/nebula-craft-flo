@@ -212,9 +212,21 @@ serve(async (req) => {
         
         if (exactMatch) {
           console.log("Cache hit! Returning cached image");
+          
+          // Generate a signed URL for the cached image
+          let cachedUrl = exactMatch.image_url;
+          if (!cachedUrl.startsWith('data:') && !cachedUrl.includes('token=')) {
+            const { data: signedData } = await supabaseAdmin.storage
+              .from("generated-images")
+              .createSignedUrl(cachedUrl, 3600);
+            if (signedData?.signedUrl) {
+              cachedUrl = signedData.signedUrl;
+            }
+          }
+          
           return new Response(
             JSON.stringify({ 
-              image: exactMatch.image_url,
+              image: cachedUrl,
               description: "Image retrieved from cache",
               saved: true,
               cached: true
@@ -353,7 +365,7 @@ serve(async (req) => {
       );
     }
 
-    let savedImageUrl = imageData;
+    let storedPath: string | null = null;
 
     // Save to storage and database if user is authenticated and requested
     if (saveToGallery && userId) {
@@ -364,7 +376,7 @@ serve(async (req) => {
         
         // Upload to storage
         const fileName = `${userId}/${Date.now()}.png`;
-        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+        const { error: uploadError } = await supabaseAdmin.storage
           .from("generated-images")
           .upload(fileName, binaryData, {
             contentType: "image/png",
@@ -374,21 +386,23 @@ serve(async (req) => {
         if (uploadError) {
           console.error("Storage upload error:", uploadError);
         } else {
-          // Get public URL
-          const { data: publicUrlData } = supabaseAdmin.storage
-            .from("generated-images")
-            .getPublicUrl(fileName);
-          
-          savedImageUrl = publicUrlData.publicUrl;
+          storedPath = fileName;
 
-          // Save to database with normalized prompt for better cache matching
+          // Generate a signed URL for the stored image
+          const { data: signedData } = await supabaseAdmin.storage
+            .from("generated-images")
+            .createSignedUrl(fileName, 3600);
+
+          const dbImageUrl = signedData?.signedUrl || fileName;
+
+          // Save to database with the storage path
           const { error: dbError } = await supabaseAdmin
             .from("generated_images")
             .insert({
               user_id: userId,
               prompt: validatedPrompt.toLowerCase(),
               style: validatedStyle?.toLowerCase() || null,
-              image_url: savedImageUrl
+              image_url: fileName
             });
 
           if (dbError) {
@@ -397,16 +411,17 @@ serve(async (req) => {
         }
       } catch (saveError) {
         console.error("Error saving to gallery:", saveError);
-        // Continue with response even if save fails
       }
     }
 
+    // Always return the base64 image for immediate display
     return new Response(
       JSON.stringify({ 
-        image: savedImageUrl,
+        image: imageData,
         description: textContent || "Image generated successfully",
         saved: saveToGallery && userId ? true : false,
-        cached: false
+        cached: false,
+        storedPath
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
