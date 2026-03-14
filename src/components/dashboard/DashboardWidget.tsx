@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export interface WidgetConfig {
   id: string;
-  type: 'stats' | 'quick-actions' | 'social-feed' | 'tips' | 'quests' | 'creators';
+  type: 'stats' | 'quick-actions' | 'social-feed' | 'tips' | 'quests' | 'creators' | 'quick-generate';
   title: string;
   size: 'small' | 'medium' | 'large';
   isVisible: boolean;

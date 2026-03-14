@@ -7,6 +7,7 @@ import type { Json } from '@/integrations/supabase/types';
 
 const DEFAULT_LAYOUT: WidgetConfig[] = [
   { id: 'stats', type: 'stats', title: 'Your Progress', size: 'medium', isVisible: true },
+  { id: 'quick-generate', type: 'quick-generate', title: 'Quick Generate', size: 'medium', isVisible: true },
   { id: 'quests', type: 'quests', title: 'Active Quests', size: 'medium', isVisible: true },
   { id: 'quick-actions', type: 'quick-actions', title: 'Quick Actions', size: 'medium', isVisible: true },
   { id: 'social-feed', type: 'social-feed', title: 'Community Highlights', size: 'medium', isVisible: true },
