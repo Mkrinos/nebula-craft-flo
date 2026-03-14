@@ -11,6 +11,7 @@ import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import StarfieldBackground from '@/components/StarfieldBackground';
 import { ImageComments } from '@/components/ImageComments';
+import ImageEditDialog from '@/components/ImageEditDialog';
 import { SEOHead } from '@/components/SEOHead';
 import { CommunityTour } from '@/components/community/CommunityTour';
 import { ContributorBadgesDisplay } from '@/components/community/ContributorBadgesDisplay';
@@ -35,7 +36,8 @@ import {
   Sparkles,
   Globe,
   X,
-  Award
+  Award,
+  Wand2
 } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { toast } from 'sonner';
@@ -76,6 +78,7 @@ const Community = () => {
   const [followingFeed, setFollowingFeed] = useState<CommunityImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<CommunityImage | null>(null);
+  const [editingImage, setEditingImage] = useState<CommunityImage | null>(null);
   const [tourHighlight, setTourHighlight] = useState<string | null>(null);
 
   // Get signed URLs for all images
@@ -744,6 +747,18 @@ const Community = () => {
                       <Share2 className="w-5 h-5" />
                       <span>Share</span>
                     </button>
+                    {user && (
+                      <button 
+                        onClick={() => {
+                          setEditingImage(selectedImage);
+                          setSelectedImage(null);
+                        }}
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary"
+                      >
+                        <Wand2 className="w-5 h-5" />
+                        <span>Remix</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* AI-Moderated Comments */}
@@ -752,6 +767,16 @@ const Community = () => {
               </div>
             </SciFiFrame>
           </div>
+        )}
+
+        {/* Image Edit/Remix Dialog */}
+        {editingImage && (
+          <ImageEditDialog
+            open={!!editingImage}
+            onOpenChange={(open) => !open && setEditingImage(null)}
+            imageUrl={getSignedUrl(editingImage.image_url)}
+            originalPrompt={editingImage.prompt}
+          />
         )}
 
         <MobileBottomNav />

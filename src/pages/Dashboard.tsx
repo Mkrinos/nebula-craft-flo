@@ -46,6 +46,7 @@ import { SocialFeedWidget } from '@/components/dashboard/SocialFeedWidget';
 import { TipsWidget } from '@/components/dashboard/TipsWidget';
 import { QuestsWidget } from '@/components/dashboard/QuestsWidget';
 import { CreatorsWidget } from '@/components/dashboard/CreatorsWidget';
+import { QuickGenerateWidget } from '@/components/dashboard/QuickGenerateWidget';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { DashboardTour } from '@/components/dashboard/DashboardTour';
 import { toast } from 'sonner';
@@ -121,6 +122,8 @@ const Dashboard = () => {
         return <QuestsWidget />;
       case 'creators':
         return <CreatorsWidget />;
+      case 'quick-generate':
+        return <QuickGenerateWidget />;
       default:
         return null;
     }

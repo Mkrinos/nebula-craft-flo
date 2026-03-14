@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, CheckCircle, AlertTriangle, Trash2, Download, X } from 'lucide-react';
+import { Mail, Lock, ArrowRight, CheckCircle, AlertTriangle, Trash2, Download, X, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import AvatarGenerator from '@/components/AvatarGenerator';
 import { SciFiFrame } from '@/components/ui/sci-fi-frame';
 import { SciFiButton } from '@/components/ui/sci-fi-button';
 import { SciFiInput } from '@/components/ui/sci-fi-input';
@@ -260,6 +261,18 @@ const AccountSettingsDialog = ({ open, onOpenChange }: AccountSettingsDialogProp
                     </SciFiButton>
                   </div>
                 </form>
+
+                {/* AI Avatar Generator */}
+                <div className="mt-8 pt-6 border-t border-neon-cyan/20">
+                  <h4 className="text-sm font-display text-neon-cyan mb-2 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    AI Avatar Generator
+                  </h4>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Generate a unique AI-powered avatar for your profile.
+                  </p>
+                  <AvatarGenerator />
+                </div>
 
                 {/* Data Export Section */}
                 <div className="mt-8 pt-6 border-t border-neon-cyan/20">

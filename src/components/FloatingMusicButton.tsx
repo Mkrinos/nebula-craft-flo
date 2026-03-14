@@ -42,7 +42,7 @@ export const FloatingMusicButton = forwardRef<HTMLDivElement, FloatingMusicButto
   const rippleIdRef = useRef(0);
   const particleIdRef = useRef(0);
   const lastVolumeRef = useRef(volume);
-  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isLongPressRef = useRef(false);
   
   // Arc configuration - increased size for better touch targets

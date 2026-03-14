@@ -10,6 +10,7 @@ import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import StarfieldBackground from '@/components/StarfieldBackground';
+import ImageEditDialog from '@/components/ImageEditDialog';
 import { SciFiFrame } from '@/components/ui/sci-fi-frame';
 import { SciFiButton } from '@/components/ui/sci-fi-button';
 import { SciFiPanel } from '@/components/ui/sci-fi-panel';
@@ -23,7 +24,8 @@ import {
   Download,
   Share2,
   X,
-  Sparkles
+  Sparkles,
+  Wand2
 } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { toast } from 'sonner';
@@ -46,6 +48,7 @@ const GenerationHistory = () => {
   const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
+  const [editingImage, setEditingImage] = useState<GeneratedImage | null>(null);
 
   // Get signed URLs for all images
   const imageUrls = useMemo(() => images.map(img => img.image_url), [images]);
@@ -360,6 +363,18 @@ const GenerationHistory = () => {
                           <RefreshCw className="w-4 h-4" />
                           Re-generate
                         </SciFiButton>
+                        <SciFiButton
+                          variant="accent"
+                          size="sm"
+                          className="gap-2"
+                          onClick={() => {
+                            setEditingImage(selectedImage);
+                            setSelectedImage(null);
+                          }}
+                        >
+                          <Wand2 className="w-4 h-4" />
+                          Edit / Remix
+                        </SciFiButton>
                         <SciFiButton 
                           variant="ghost" 
                           size="sm" 
@@ -417,6 +432,16 @@ const GenerationHistory = () => {
         </main>
 
         <MobileBottomNav />
+
+        {/* Image Edit Dialog */}
+        {editingImage && (
+          <ImageEditDialog
+            open={!!editingImage}
+            onOpenChange={(open) => !open && setEditingImage(null)}
+            imageUrl={getSignedUrl(editingImage.image_url)}
+            originalPrompt={editingImage.prompt}
+          />
+        )}
       </div>
       </PullToRefresh>
     </SwipeablePageWrapper>

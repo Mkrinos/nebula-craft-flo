@@ -46,7 +46,7 @@ const SciFiAIAvatar = ({ onGreetingComplete, size = 'lg', autoGreet = true }: Sc
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const headRotationRef = useRef<NodeJS.Timeout | null>(null);
+  const headRotationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const sizeClasses = {
@@ -247,7 +247,7 @@ const SciFiAIAvatar = ({ onGreetingComplete, size = 'lg', autoGreet = true }: Sc
     }
 
     // Fallback: simulate lip movement for text-only mode
-    let mouthInterval: NodeJS.Timeout | null = null;
+    let mouthInterval: ReturnType<typeof setInterval> | null = null;
     if (!reducedMotion) {
       const shapes: MouthShape[] = ['closed', 'slightly_open', 'open', 'wide', 'open', 'slightly_open'];
       let shapeIndex = 0;
