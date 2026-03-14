@@ -48,6 +48,7 @@ const GenerationHistory = () => {
   const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
+  const [editingImage, setEditingImage] = useState<GeneratedImage | null>(null);
 
   // Get signed URLs for all images
   const imageUrls = useMemo(() => images.map(img => img.image_url), [images]);
