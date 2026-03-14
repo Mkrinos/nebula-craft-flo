@@ -262,6 +262,18 @@ const AccountSettingsDialog = ({ open, onOpenChange }: AccountSettingsDialogProp
                   </div>
                 </form>
 
+                {/* AI Avatar Generator */}
+                <div className="mt-8 pt-6 border-t border-neon-cyan/20">
+                  <h4 className="text-sm font-display text-neon-cyan mb-2 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    AI Avatar Generator
+                  </h4>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Generate a unique AI-powered avatar for your profile.
+                  </p>
+                  <AvatarGenerator />
+                </div>
+
                 {/* Data Export Section */}
                 <div className="mt-8 pt-6 border-t border-neon-cyan/20">
                   <h4 className="text-sm font-display text-neon-cyan mb-2">Your Data</h4>
