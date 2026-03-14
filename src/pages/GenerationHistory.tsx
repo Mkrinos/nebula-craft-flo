@@ -10,6 +10,7 @@ import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import StarfieldBackground from '@/components/StarfieldBackground';
+import ImageEditDialog from '@/components/ImageEditDialog';
 import { SciFiFrame } from '@/components/ui/sci-fi-frame';
 import { SciFiButton } from '@/components/ui/sci-fi-button';
 import { SciFiPanel } from '@/components/ui/sci-fi-panel';
@@ -23,7 +24,8 @@ import {
   Download,
   Share2,
   X,
-  Sparkles
+  Sparkles,
+  Wand2
 } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { toast } from 'sonner';
