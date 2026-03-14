@@ -747,6 +747,18 @@ const Community = () => {
                       <Share2 className="w-5 h-5" />
                       <span>Share</span>
                     </button>
+                    {user && (
+                      <button 
+                        onClick={() => {
+                          setEditingImage(selectedImage);
+                          setSelectedImage(null);
+                        }}
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary"
+                      >
+                        <Wand2 className="w-5 h-5" />
+                        <span>Remix</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* AI-Moderated Comments */}
