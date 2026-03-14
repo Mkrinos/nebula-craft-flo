@@ -78,6 +78,7 @@ const Community = () => {
   const [followingFeed, setFollowingFeed] = useState<CommunityImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<CommunityImage | null>(null);
+  const [editingImage, setEditingImage] = useState<CommunityImage | null>(null);
   const [tourHighlight, setTourHighlight] = useState<string | null>(null);
 
   // Get signed URLs for all images
