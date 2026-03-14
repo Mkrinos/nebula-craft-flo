@@ -212,9 +212,21 @@ serve(async (req) => {
         
         if (exactMatch) {
           console.log("Cache hit! Returning cached image");
+          
+          // Generate a signed URL for the cached image
+          let cachedUrl = exactMatch.image_url;
+          if (!cachedUrl.startsWith('data:') && !cachedUrl.includes('token=')) {
+            const { data: signedData } = await supabaseAdmin.storage
+              .from("generated-images")
+              .createSignedUrl(cachedUrl, 3600);
+            if (signedData?.signedUrl) {
+              cachedUrl = signedData.signedUrl;
+            }
+          }
+          
           return new Response(
             JSON.stringify({ 
-              image: exactMatch.image_url,
+              image: cachedUrl,
               description: "Image retrieved from cache",
               saved: true,
               cached: true
