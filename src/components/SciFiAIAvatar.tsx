@@ -247,7 +247,7 @@ const SciFiAIAvatar = ({ onGreetingComplete, size = 'lg', autoGreet = true }: Sc
     }
 
     // Fallback: simulate lip movement for text-only mode
-    let mouthInterval: NodeJS.Timeout | null = null;
+    let mouthInterval: ReturnType<typeof setInterval> | null = null;
     if (!reducedMotion) {
       const shapes: MouthShape[] = ['closed', 'slightly_open', 'open', 'wide', 'open', 'slightly_open'];
       let shapeIndex = 0;

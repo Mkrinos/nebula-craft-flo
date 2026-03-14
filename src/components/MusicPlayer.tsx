@@ -246,7 +246,7 @@ export const MusicPlayer: React.FC = () => {
   const [playlistToShare, setPlaylistToShare] = useState<Playlist | null>(null);
   const [trackToDelete, setTrackToDelete] = useState<MusicTrack | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState<{ track: MusicTrack; timeoutId: NodeJS.Timeout } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{ track: MusicTrack; timeoutId: ReturnType<typeof setTimeout> } | null>(null);
 
   const pendingDeleteId = pendingDelete?.track.id;
 

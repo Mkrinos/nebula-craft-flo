@@ -63,7 +63,7 @@ export function HapticPatternVisualizer({
     setActiveSegment(0);
 
     let currentIndex = 0;
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const playNextSegment = () => {
       if (currentIndex >= segments.length) {
