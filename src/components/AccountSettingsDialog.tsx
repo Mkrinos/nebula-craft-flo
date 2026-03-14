@@ -7,7 +7,6 @@ import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import AvatarGenerator from '@/components/AvatarGenerator';
-import { useAuth } from '@/hooks/useAuth';
 import { SciFiFrame } from '@/components/ui/sci-fi-frame';
 import { SciFiButton } from '@/components/ui/sci-fi-button';
 import { SciFiInput } from '@/components/ui/sci-fi-input';
