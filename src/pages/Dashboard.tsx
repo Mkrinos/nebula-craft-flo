@@ -122,6 +122,8 @@ const Dashboard = () => {
         return <QuestsWidget />;
       case 'creators':
         return <CreatorsWidget />;
+      case 'quick-generate':
+        return <QuickGenerateWidget />;
       default:
         return null;
     }
