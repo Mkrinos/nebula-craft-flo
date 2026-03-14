@@ -46,7 +46,7 @@ const SciFiAIAvatar = ({ onGreetingComplete, size = 'lg', autoGreet = true }: Sc
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const headRotationRef = useRef<NodeJS.Timeout | null>(null);
+  const headRotationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const sizeClasses = {
