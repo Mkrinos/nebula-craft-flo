@@ -363,6 +363,18 @@ const GenerationHistory = () => {
                           <RefreshCw className="w-4 h-4" />
                           Re-generate
                         </SciFiButton>
+                        <SciFiButton
+                          variant="accent"
+                          size="sm"
+                          className="gap-2"
+                          onClick={() => {
+                            setEditingImage(selectedImage);
+                            setSelectedImage(null);
+                          }}
+                        >
+                          <Wand2 className="w-4 h-4" />
+                          Edit / Remix
+                        </SciFiButton>
                         <SciFiButton 
                           variant="ghost" 
                           size="sm" 
