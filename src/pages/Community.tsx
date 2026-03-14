@@ -11,6 +11,7 @@ import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import StarfieldBackground from '@/components/StarfieldBackground';
 import { ImageComments } from '@/components/ImageComments';
+import ImageEditDialog from '@/components/ImageEditDialog';
 import { SEOHead } from '@/components/SEOHead';
 import { CommunityTour } from '@/components/community/CommunityTour';
 import { ContributorBadgesDisplay } from '@/components/community/ContributorBadgesDisplay';
@@ -35,7 +36,8 @@ import {
   Sparkles,
   Globe,
   X,
-  Award
+  Award,
+  Wand2
 } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { toast } from 'sonner';
