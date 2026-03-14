@@ -432,6 +432,16 @@ const GenerationHistory = () => {
         </main>
 
         <MobileBottomNav />
+
+        {/* Image Edit Dialog */}
+        {editingImage && (
+          <ImageEditDialog
+            open={!!editingImage}
+            onOpenChange={(open) => !open && setEditingImage(null)}
+            imageUrl={getSignedUrl(editingImage.image_url)}
+            originalPrompt={editingImage.prompt}
+          />
+        )}
       </div>
       </PullToRefresh>
     </SwipeablePageWrapper>

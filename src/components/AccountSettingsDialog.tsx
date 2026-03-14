@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, CheckCircle, AlertTriangle, Trash2, Download, X } from 'lucide-react';
+import { Mail, Lock, ArrowRight, CheckCircle, AlertTriangle, Trash2, Download, X, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import AvatarGenerator from '@/components/AvatarGenerator';
 import { useAuth } from '@/hooks/useAuth';
 import { SciFiFrame } from '@/components/ui/sci-fi-frame';
 import { SciFiButton } from '@/components/ui/sci-fi-button';
