@@ -769,6 +769,16 @@ const Community = () => {
           </div>
         )}
 
+        {/* Image Edit/Remix Dialog */}
+        {editingImage && (
+          <ImageEditDialog
+            open={!!editingImage}
+            onOpenChange={(open) => !open && setEditingImage(null)}
+            imageUrl={getSignedUrl(editingImage.image_url)}
+            originalPrompt={editingImage.prompt}
+          />
+        )}
+
         <MobileBottomNav />
       </div>
       </PullToRefresh>
