@@ -394,14 +394,14 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="field">
               <div class="field-label">Other Platforms Used</div>
               <div class="tags">
-                ${(data.otherPlatforms || []).map(f => `<span class="tag">${f}</span>`).join('')}
+                ${(data.otherPlatforms || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
               </div>
-              ${data.otherPlatformsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.otherPlatformsOther}</div>` : ''}
+              ${data.otherPlatformsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.otherPlatformsOther)}</div>` : ''}
             </div>
             ${data.platformComparison ? `
             <div class="field" style="margin-top: 15px;">
               <div class="field-label">Comparison Notes</div>
-              <div class="field-value">"${data.platformComparison}"</div>
+              <div class="field-value">"${escapeHtml(data.platformComparison)}"</div>
             </div>
             ` : ''}
           </div>
