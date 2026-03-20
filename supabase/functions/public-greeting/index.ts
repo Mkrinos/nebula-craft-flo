@@ -6,6 +6,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Allowed voice IDs to prevent abuse
+const ALLOWED_VOICE_IDS = new Set([
+  'JBFqnCBsd6RMkjVDRZzb',  // George - default deep sci-fi voice
+]);
+
 // Allowed welcome messages for public greeting (prevents abuse)
 const ALLOWED_GREETINGS = [
   "Welcome, traveler. You stand at the threshold of infinite creativity.",
