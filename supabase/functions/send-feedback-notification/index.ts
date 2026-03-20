@@ -436,7 +436,7 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
             <div class="field">
               <div class="field-label">Recommend Likelihood</div>
-              <div class="field-value">${data.recommendLikelihood || 'Not provided'}</div>
+              <div class="field-value">${escapeHtml(data.recommendLikelihood) || 'Not provided'}</div>
             </div>
           </div>
       `;
