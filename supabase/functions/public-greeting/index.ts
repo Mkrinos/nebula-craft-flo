@@ -36,6 +36,14 @@ serve(async (req) => {
       );
     }
 
+    // Validate voiceId against allowlist
+    if (!ALLOWED_VOICE_IDS.has(voiceId)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid voice ID" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Only allow specific greeting messages (prevents abuse of public endpoint)
     const isAllowedGreeting = ALLOWED_GREETINGS.some(
       greeting => text.toLowerCase().trim() === greeting.toLowerCase().trim()

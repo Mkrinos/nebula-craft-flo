@@ -52,6 +52,14 @@ serve(async (req) => {
       );
     }
 
+    // Validate voiceId against allowlist
+    if (!ALLOWED_VOICE_IDS.has(voiceId)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid voice ID" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Check user has voice access
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
