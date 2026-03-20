@@ -277,7 +277,7 @@ const handler = async (req: Request): Promise<Response> => {
         emailHtml += `
           <div class="section highlight">
             <h2>✨ Dream Feature</h2>
-            <div class="field-value">"${data.dreamFeature}"</div>
+            <div class="field-value">"${escapeHtml(data.dreamFeature)}"</div>
           </div>
         `;
       }
