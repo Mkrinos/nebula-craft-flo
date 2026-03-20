@@ -422,7 +422,7 @@ const handler = async (req: Request): Promise<Response> => {
         emailHtml += `
           <div class="section highlight">
             <h2>💡 Feature Suggestions</h2>
-            <div class="field-value">"${data.featureSuggestions}"</div>
+            <div class="field-value">"${escapeHtml(data.featureSuggestions)}"</div>
           </div>
         `;
       }
