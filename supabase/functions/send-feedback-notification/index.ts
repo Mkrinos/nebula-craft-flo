@@ -412,7 +412,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>📋 Feature Priorities (Ranked)</h2>
             <ol style="margin: 0; padding-left: 20px;">
-              ${data.featurePriorities.map((f, i) => `<li>${f}</li>`).join('')}
+              ${data.featurePriorities.map((f, i) => `<li>${escapeHtml(f)}</li>`).join('')}
             </ol>
           </div>
         `;
