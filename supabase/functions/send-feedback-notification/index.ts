@@ -187,7 +187,7 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="meta-info">
               <div class="meta-item">
                 <div class="label">Session ID</div>
-                <div class="value">${data.sessionId}</div>
+                <div class="value">${escapeHtml(data.sessionId)}</div>
               </div>
               <div class="meta-item">
                 <div class="label">Device</div>
