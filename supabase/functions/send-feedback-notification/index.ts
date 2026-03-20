@@ -480,7 +480,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "MX2K Feedback <onboarding@resend.dev>",
       to: ["mkrinos227@gmail.com"],
-      subject: `🚀 New ${feedbackTypeLabel} Feedback - ${data.sessionId}`,
+      subject: `🚀 New ${feedbackTypeLabel} Feedback - ${escapeHtml(data.sessionId)}`,
       html: emailHtml,
     });
 
