@@ -191,7 +191,7 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
               <div class="meta-item">
                 <div class="label">Device</div>
-                <div class="value">${data.deviceType || 'Unknown'}</div>
+                <div class="value">${escapeHtml(data.deviceType) || 'Unknown'}</div>
               </div>
               <div class="meta-item">
                 <div class="label">Language</div>
