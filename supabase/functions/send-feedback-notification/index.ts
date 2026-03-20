@@ -315,7 +315,7 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="tags">
               ${(data.firstImpressions || []).map(f => `<span class="tag">${f}</span>`).join('')}
             </div>
-            ${data.firstImpressionsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.firstImpressionsOther}</div>` : ''}
+            <div class="field-value">${escapeHtml(data.firstImpressionsOther)}</div>` : ''}
           </div>
 
           <div class="section">
