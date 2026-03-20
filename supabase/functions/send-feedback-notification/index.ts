@@ -385,7 +385,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>🎮 Child Engagement</h2>
             <div class="tags">
-              ${(data.childEngagement || []).map(f => `<span class="tag">${f}</span>`).join('')}
+              ${(data.childEngagement || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
             </div>
           </div>
 
