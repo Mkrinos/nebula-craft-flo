@@ -6,6 +6,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Allowed voice IDs to prevent abuse
+const ALLOWED_VOICE_IDS = new Set([
+  'JBFqnCBsd6RMkjVDRZzb',  // George - default deep sci-fi voice
+]);
+
 // Allowed welcome messages for public greeting (prevents abuse)
 const ALLOWED_GREETINGS = [
   "Welcome, traveler. You stand at the threshold of infinite creativity.",
@@ -27,6 +32,14 @@ serve(async (req) => {
     if (!text) {
       return new Response(
         JSON.stringify({ error: "Text is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate voiceId against allowlist
+    if (!ALLOWED_VOICE_IDS.has(voiceId)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid voice ID" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

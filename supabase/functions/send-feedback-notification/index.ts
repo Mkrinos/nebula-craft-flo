@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.89.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -103,15 +104,48 @@ const formatWouldReturn = (value: string | undefined): string => {
   return value ? (map[value] || value) : 'Not provided';
 };
 
+function escapeHtml(str: string | undefined | null): string {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Authenticate the user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const data: FeedbackNotificationRequest = await req.json();
     
-    console.log("Received feedback notification request:", JSON.stringify(data, null, 2));
+    console.log("Received feedback notification request from user:", user.id);
 
     const isYoungExplorer = data.feedbackType === 'young_explorer';
     const feedbackTypeLabel = isYoungExplorer ? 'Young Explorer' : 'Parent/Guardian';
@@ -153,11 +187,11 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="meta-info">
               <div class="meta-item">
                 <div class="label">Session ID</div>
-                <div class="value">${data.sessionId}</div>
+                <div class="value">${escapeHtml(data.sessionId)}</div>
               </div>
               <div class="meta-item">
                 <div class="label">Device</div>
-                <div class="value">${data.deviceType || 'Unknown'}</div>
+                <div class="value">${escapeHtml(data.deviceType) || 'Unknown'}</div>
               </div>
               <div class="meta-item">
                 <div class="label">Language</div>
@@ -221,9 +255,9 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="field">
               <div class="field-label">Selected Features</div>
               <div class="tags">
-                ${(data.lovedFeatures || []).map(f => `<span class="tag">${f}</span>`).join('')}
+                ${(data.lovedFeatures || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
               </div>
-              ${data.lovedOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.lovedOther}</div>` : ''}
+              ${data.lovedOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.lovedOther)}</div>` : ''}
             </div>
           </div>
 
@@ -232,9 +266,9 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="field">
               <div class="field-label">Selected Areas</div>
               <div class="tags">
-                ${(data.improvements || []).map(f => `<span class="tag">${f}</span>`).join('')}
+                ${(data.improvements || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
               </div>
-              ${data.improvementsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.improvementsOther}</div>` : ''}
+              ${data.improvementsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.improvementsOther)}</div>` : ''}
             </div>
           </div>
       `;
@@ -243,7 +277,7 @@ const handler = async (req: Request): Promise<Response> => {
         emailHtml += `
           <div class="section highlight">
             <h2>✨ Dream Feature</h2>
-            <div class="field-value">"${data.dreamFeature}"</div>
+            <div class="field-value">"${escapeHtml(data.dreamFeature)}"</div>
           </div>
         `;
       }
@@ -279,9 +313,9 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>💭 First Impressions</h2>
             <div class="tags">
-              ${(data.firstImpressions || []).map(f => `<span class="tag">${f}</span>`).join('')}
+              ${(data.firstImpressions || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
             </div>
-            ${data.firstImpressionsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.firstImpressionsOther}</div>` : ''}
+            ${data.firstImpressionsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.firstImpressionsOther)}</div>` : ''}
           </div>
 
           <div class="section">
@@ -293,9 +327,9 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="field">
               <div class="field-label">Primary Value</div>
               <div class="tags">
-                ${(data.primaryValue || []).map(f => `<span class="tag">${f}</span>`).join('')}
+                ${(data.primaryValue || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
               </div>
-              ${data.primaryValueOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.primaryValueOther}</div>` : ''}
+              ${data.primaryValueOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.primaryValueOther)}</div>` : ''}
             </div>
           </div>
 
@@ -341,7 +375,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>🛡️ Safety Feature Priority (Ranked)</h2>
             <ol style="margin: 0; padding-left: 20px;">
-              ${data.safetyFeatureRanking.map((f, i) => `<li>${f}</li>`).join('')}
+              ${data.safetyFeatureRanking.map((f, i) => `<li>${escapeHtml(f)}</li>`).join('')}
             </ol>
           </div>
         `;
@@ -351,7 +385,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>🎮 Child Engagement</h2>
             <div class="tags">
-              ${(data.childEngagement || []).map(f => `<span class="tag">${f}</span>`).join('')}
+              ${(data.childEngagement || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
             </div>
           </div>
 
@@ -360,14 +394,14 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="field">
               <div class="field-label">Other Platforms Used</div>
               <div class="tags">
-                ${(data.otherPlatforms || []).map(f => `<span class="tag">${f}</span>`).join('')}
+                ${(data.otherPlatforms || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
               </div>
-              ${data.otherPlatformsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.otherPlatformsOther}</div>` : ''}
+              ${data.otherPlatformsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.otherPlatformsOther)}</div>` : ''}
             </div>
             ${data.platformComparison ? `
             <div class="field" style="margin-top: 15px;">
               <div class="field-label">Comparison Notes</div>
-              <div class="field-value">"${data.platformComparison}"</div>
+              <div class="field-value">"${escapeHtml(data.platformComparison)}"</div>
             </div>
             ` : ''}
           </div>
@@ -378,7 +412,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>📋 Feature Priorities (Ranked)</h2>
             <ol style="margin: 0; padding-left: 20px;">
-              ${data.featurePriorities.map((f, i) => `<li>${f}</li>`).join('')}
+              ${data.featurePriorities.map((f, i) => `<li>${escapeHtml(f)}</li>`).join('')}
             </ol>
           </div>
         `;
@@ -388,7 +422,7 @@ const handler = async (req: Request): Promise<Response> => {
         emailHtml += `
           <div class="section highlight">
             <h2>💡 Feature Suggestions</h2>
-            <div class="field-value">"${data.featureSuggestions}"</div>
+            <div class="field-value">"${escapeHtml(data.featureSuggestions)}"</div>
           </div>
         `;
       }
@@ -398,11 +432,11 @@ const handler = async (req: Request): Promise<Response> => {
             <h2>📈 Likelihood</h2>
             <div class="field">
               <div class="field-label">Signup Likelihood</div>
-              <div class="field-value">${data.signupLikelihood || 'Not provided'}</div>
+              <div class="field-value">${escapeHtml(data.signupLikelihood) || 'Not provided'}</div>
             </div>
             <div class="field">
               <div class="field-label">Recommend Likelihood</div>
-              <div class="field-value">${data.recommendLikelihood || 'Not provided'}</div>
+              <div class="field-value">${escapeHtml(data.recommendLikelihood) || 'Not provided'}</div>
             </div>
           </div>
       `;
@@ -411,7 +445,7 @@ const handler = async (req: Request): Promise<Response> => {
         emailHtml += `
           <div class="section">
             <h2>❓ Questions & Concerns</h2>
-            <div class="field-value">"${data.questionsAndConcerns}"</div>
+            <div class="field-value">"${escapeHtml(data.questionsAndConcerns)}"</div>
           </div>
         `;
       }
@@ -422,11 +456,11 @@ const handler = async (req: Request): Promise<Response> => {
             <h2 style="color: #059669;">📧 Contact Information</h2>
             <div class="field">
               <div class="field-label">Email</div>
-              <div class="field-value"><a href="mailto:${data.contactEmail}">${data.contactEmail}</a></div>
+              <div class="field-value"><a href="mailto:${escapeHtml(data.contactEmail)}">${escapeHtml(data.contactEmail)}</a></div>
             </div>
             <div class="field">
               <div class="field-label">Preferred Contact Frequency</div>
-              <div class="field-value">${data.contactFrequency || 'Not specified'}</div>
+              <div class="field-value">${escapeHtml(data.contactFrequency) || 'Not specified'}</div>
             </div>
           </div>
         `;
@@ -446,7 +480,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "MX2K Feedback <onboarding@resend.dev>",
       to: ["mkrinos227@gmail.com"],
-      subject: `🚀 New ${feedbackTypeLabel} Feedback - ${data.sessionId}`,
+      subject: `🚀 New ${feedbackTypeLabel} Feedback - ${escapeHtml(data.sessionId)}`,
       html: emailHtml,
     });
 

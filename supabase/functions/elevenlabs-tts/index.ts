@@ -6,6 +6,14 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+// Allowed voice IDs
+const ALLOWED_VOICE_IDS = new Set([
+  'JBFqnCBsd6RMkjVDRZzb',  // George
+  'CwhRBWXzGAHq8TQ4Fs17',  // Roger
+  'EXAVITQu4vr4xnSDxMaL',  // Sarah
+  'FGY2WhTYpPnrIDTdsKH5',  // Laura
+  'IKne3meq5aSn9XLyUdCD',  // Charlie
+]);
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -40,6 +48,14 @@ serve(async (req) => {
     if (text.trim().length === 0) {
       return new Response(
         JSON.stringify({ error: "Text cannot be empty" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate voiceId against allowlist
+    if (!ALLOWED_VOICE_IDS.has(voiceId)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid voice ID" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
