@@ -456,11 +456,11 @@ const handler = async (req: Request): Promise<Response> => {
             <h2 style="color: #059669;">📧 Contact Information</h2>
             <div class="field">
               <div class="field-label">Email</div>
-              <div class="field-value"><a href="mailto:${data.contactEmail}">${data.contactEmail}</a></div>
+              <div class="field-value"><a href="mailto:${escapeHtml(data.contactEmail)}">${escapeHtml(data.contactEmail)}</a></div>
             </div>
             <div class="field">
               <div class="field-label">Preferred Contact Frequency</div>
-              <div class="field-value">${data.contactFrequency || 'Not specified'}</div>
+              <div class="field-value">${escapeHtml(data.contactFrequency) || 'Not specified'}</div>
             </div>
           </div>
         `;
