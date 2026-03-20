@@ -255,9 +255,9 @@ const handler = async (req: Request): Promise<Response> => {
             <div class="field">
               <div class="field-label">Selected Features</div>
               <div class="tags">
-                ${(data.lovedFeatures || []).map(f => `<span class="tag">${f}</span>`).join('')}
+                ${(data.lovedFeatures || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
               </div>
-              ${data.lovedOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${data.lovedOther}</div>` : ''}
+              ${data.lovedOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.lovedOther)}</div>` : ''}
             </div>
           </div>
 
