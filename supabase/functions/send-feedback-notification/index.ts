@@ -313,9 +313,9 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>💭 First Impressions</h2>
             <div class="tags">
-              ${(data.firstImpressions || []).map(f => `<span class="tag">${f}</span>`).join('')}
+              ${(data.firstImpressions || []).map(f => `<span class="tag">${escapeHtml(f)}</span>`).join('')}
             </div>
-            <div class="field-value">${escapeHtml(data.firstImpressionsOther)}</div>` : ''}
+            ${data.firstImpressionsOther ? `<div class="field-value" style="margin-top: 10px;"><strong>Other:</strong> ${escapeHtml(data.firstImpressionsOther)}</div>` : ''}
           </div>
 
           <div class="section">
