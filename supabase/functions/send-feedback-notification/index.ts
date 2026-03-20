@@ -375,7 +375,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div class="section">
             <h2>🛡️ Safety Feature Priority (Ranked)</h2>
             <ol style="margin: 0; padding-left: 20px;">
-              ${data.safetyFeatureRanking.map((f, i) => `<li>${f}</li>`).join('')}
+              ${data.safetyFeatureRanking.map((f, i) => `<li>${escapeHtml(f)}</li>`).join('')}
             </ol>
           </div>
         `;
