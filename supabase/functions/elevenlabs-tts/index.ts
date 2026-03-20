@@ -6,6 +6,14 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+// Allowed voice IDs
+const ALLOWED_VOICE_IDS = new Set([
+  'JBFqnCBsd6RMkjVDRZzb',  // George
+  'CwhRBWXzGAHq8TQ4Fs17',  // Roger
+  'EXAVITQu4vr4xnSDxMaL',  // Sarah
+  'FGY2WhTYpPnrIDTdsKH5',  // Laura
+  'IKne3meq5aSn9XLyUdCD',  // Charlie
+]);
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
