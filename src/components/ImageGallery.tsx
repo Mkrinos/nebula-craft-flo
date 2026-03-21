@@ -75,14 +75,23 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
 
       if (error) throw error;
       
-      // Fetch profiles separately for each unique user
+      // Fetch profiles separately for each unique user (skip if no images)
       const userIds = [...new Set((data || []).map(img => img.user_id))];
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, display_name')
-        .in('id', userIds);
+      let profileMap = new Map<string, { id: string; display_name: string | null }>();
       
-      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      if (userIds.length > 0) {
+        try {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, display_name')
+            .in('id', userIds);
+          
+          profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+        } catch (profileError) {
+          // Profile fetch may fail due to RLS — continue without profiles
+          console.warn('Could not fetch profiles:', profileError);
+        }
+      }
       
       const imagesWithProfiles = (data || []).map(img => ({
         ...img,
