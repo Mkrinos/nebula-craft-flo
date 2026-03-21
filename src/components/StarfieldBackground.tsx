@@ -257,7 +257,7 @@ const StarfieldBackground = () => {
           opacity: config.nebula.opacity,
           driftX: (Math.random() - 0.5) * 0.2,
           driftY: (Math.random() - 0.5) * 0.1,
-          pulseSpeed: Math.random() * 0.0015 + 0.0008,
+          pulseSpeed: Math.random() * 0.0007 + 0.0003,
           pulseOffset: Math.random() * Math.PI * 2,
         };
       });
@@ -278,7 +278,7 @@ const StarfieldBackground = () => {
         armCount: 2,
         opacity: config.galaxy.opacity * 0.6,
         color: galaxyColors[Math.floor(Math.random() * galaxyColors.length)] as any,
-        pulseSpeed: Math.random() * 0.001 + 0.0005,
+        pulseSpeed: Math.random() * 0.0005 + 0.0002,
         pulseOffset: Math.random() * Math.PI * 2,
       }));
     };
@@ -321,8 +321,8 @@ const StarfieldBackground = () => {
       }
       
       if (config.nebula.drift) {
-        x += Math.sin(time * 0.00012 + nebula.pulseOffset) * 60;
-        y += Math.cos(time * 0.0001 + nebula.pulseOffset) * 40;
+        x += Math.sin(time * 0.00006 + nebula.pulseOffset) * 60;
+        y += Math.cos(time * 0.00005 + nebula.pulseOffset) * 40;
       }
       
       // Main nebula glow

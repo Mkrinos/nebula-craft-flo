@@ -440,11 +440,11 @@
   }
 
   .animate-float {
-    animation: float 6s ease-in-out infinite;
+    animation: float 10s ease-in-out infinite;
   }
 
   .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
+    animation: pulse-glow 4s ease-in-out infinite;
   }
 
   .animate-shimmer {
