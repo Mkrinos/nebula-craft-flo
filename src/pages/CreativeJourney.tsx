@@ -180,6 +180,9 @@ const CreativeJourney = () => {
         // Haptic feedback for successful generation
         haptic.trigger('success');
         
+        // Immediately refresh credit display
+        refetchSubscription();
+        
         // Update quest progress for image generation
         if (user) {
           updateProgress('image_generation', 1);
