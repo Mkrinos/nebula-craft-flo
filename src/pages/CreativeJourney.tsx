@@ -57,7 +57,7 @@ import { BackButton } from '@/components/BackButton';
 
 const CreativeJourney = () => {
   const { user, session } = useAuth();
-  const { subscription, isLoading: subscriptionLoading } = useSubscription();
+  const { subscription, isLoading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
   const { settings } = useMotionSettings();
   const { detectLanguage, currentLanguage, getLanguageInfo } = useLanguage();
   const { triggerThink, triggerReact } = useGlobalPersona();
@@ -179,6 +179,9 @@ const CreativeJourney = () => {
         
         // Haptic feedback for successful generation
         haptic.trigger('success');
+        
+        // Immediately refresh credit display
+        refetchSubscription();
         
         // Update quest progress for image generation
         if (user) {
