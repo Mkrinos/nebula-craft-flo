@@ -257,7 +257,7 @@ const StarfieldBackground = () => {
           opacity: config.nebula.opacity,
           driftX: (Math.random() - 0.5) * 0.2,
           driftY: (Math.random() - 0.5) * 0.1,
-          pulseSpeed: Math.random() * 0.0015 + 0.0008,
+          pulseSpeed: Math.random() * 0.0007 + 0.0003,
           pulseOffset: Math.random() * Math.PI * 2,
         };
       });
