@@ -70,9 +70,11 @@ const UserMenuDropdown = () => {
           {/* User info header */}
           <DropdownMenuLabel className="flex items-center gap-3 py-3">
             {persona?.avatar_url ? (
-              <GlobalPersonaCompanion position="header" size="sm" />
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-neon-cyan/50 flex-shrink-0">
+                <img src={persona.avatar_url} alt={persona.name} className="w-full h-full object-cover" />
+              </div>
             ) : (
-              <div className="w-10 h-10 rounded-full bg-primary/20 border border-neon-cyan/50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-primary/20 border border-neon-cyan/50 flex items-center justify-center flex-shrink-0">
                 <User className="w-5 h-5 text-neon-cyan" />
               </div>
             )}
