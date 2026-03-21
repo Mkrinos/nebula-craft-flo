@@ -321,8 +321,8 @@ const StarfieldBackground = () => {
       }
       
       if (config.nebula.drift) {
-        x += Math.sin(time * 0.00012 + nebula.pulseOffset) * 60;
-        y += Math.cos(time * 0.0001 + nebula.pulseOffset) * 40;
+        x += Math.sin(time * 0.00006 + nebula.pulseOffset) * 60;
+        y += Math.cos(time * 0.00005 + nebula.pulseOffset) * 40;
       }
       
       // Main nebula glow
