@@ -278,7 +278,7 @@ const StarfieldBackground = () => {
         armCount: 2,
         opacity: config.galaxy.opacity * 0.6,
         color: galaxyColors[Math.floor(Math.random() * galaxyColors.length)] as any,
-        pulseSpeed: Math.random() * 0.001 + 0.0005,
+        pulseSpeed: Math.random() * 0.0005 + 0.0002,
         pulseOffset: Math.random() * Math.PI * 2,
       }));
     };
