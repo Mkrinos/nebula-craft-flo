@@ -164,10 +164,10 @@ export default function HapticSettings() {
   };
 
   const previewPreset = (preset: Preset) => {
-    // Temporarily apply preset intensity, trigger test pattern, then restore
+    // Temporarily apply preset intensity, trigger test pattern with audio, then restore
     const originalIntensity = getHapticIntensity();
     setHapticIntensity(preset.globalIntensity / 100);
-    triggerHaptic(preset.testPattern);
+    audioHaptic.preview(preset.testPattern);
     // Restore after short delay
     setTimeout(() => setHapticIntensity(originalIntensity), 300);
     toast.success(`Previewing ${preset.name} feedback`);
