@@ -164,10 +164,10 @@ export default function HapticSettings() {
   };
 
   const previewPreset = (preset: Preset) => {
-    // Temporarily apply preset intensity, trigger test pattern, then restore
+    // Temporarily apply preset intensity, trigger test pattern with audio, then restore
     const originalIntensity = getHapticIntensity();
     setHapticIntensity(preset.globalIntensity / 100);
-    triggerHaptic(preset.testPattern);
+    audioHaptic.preview(preset.testPattern);
     // Restore after short delay
     setTimeout(() => setHapticIntensity(originalIntensity), 300);
     toast.success(`Previewing ${preset.name} feedback`);
@@ -201,7 +201,7 @@ export default function HapticSettings() {
       // Temporarily apply the pattern's custom multiplier
       const originalIntensity = getHapticIntensity();
       setHapticIntensity(originalIntensity * pattern.customMultiplier);
-      triggerHaptic(patternId);
+      audioHaptic.preview(patternId);
       // Restore original intensity after a short delay
       setTimeout(() => setHapticIntensity(originalIntensity), 500);
       toast.success(`Previewing ${pattern.name} pattern`);
