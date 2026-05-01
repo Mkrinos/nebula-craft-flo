@@ -201,7 +201,7 @@ export default function HapticSettings() {
       // Temporarily apply the pattern's custom multiplier
       const originalIntensity = getHapticIntensity();
       setHapticIntensity(originalIntensity * pattern.customMultiplier);
-      triggerHaptic(patternId);
+      audioHaptic.preview(patternId);
       // Restore original intensity after a short delay
       setTimeout(() => setHapticIntensity(originalIntensity), 500);
       toast.success(`Previewing ${pattern.name} pattern`);
