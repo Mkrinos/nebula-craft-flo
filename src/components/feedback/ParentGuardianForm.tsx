@@ -292,8 +292,13 @@ const ParentGuardianForm = ({ onBack }: ParentGuardianFormProps) => {
     setIsSubmitting(true);
     
     try {
-      // Get current user if authenticated
+      // Require authentication to prevent abuse
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('Please sign in to submit feedback.');
+        setIsSubmitting(false);
+        return;
+      }
       
       // Insert feedback into database
       const { error } = await supabase
@@ -301,9 +306,9 @@ const ParentGuardianForm = ({ onBack }: ParentGuardianFormProps) => {
         .insert({
           feedback_type: 'parent_guardian',
           session_id: data.sessionId,
-          device_type: 'desktop', // Parent form typically from desktop
+          device_type: 'desktop',
           language: data.language,
-          user_id: user?.id || null,
+          user_id: user.id,
           child_age_group: data.childAgeGroup || null,
           heard_from: data.heardFrom || null,
           overall_satisfaction: data.overallSatisfaction,
@@ -331,6 +336,11 @@ const ParentGuardianForm = ({ onBack }: ParentGuardianFormProps) => {
       
       if (error) {
         console.error('Failed to submit feedback:', error);
+        if (error.message?.includes('Daily feedback limit')) {
+          toast.error('You\'ve reached the daily feedback limit (5/day). Please try again tomorrow.');
+          setIsSubmitting(false);
+          return;
+        }
         throw error;
       }
       
