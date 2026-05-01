@@ -45,7 +45,18 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     
     if (customers.data.length === 0) {
-      throw new Error("No Stripe customer found for this user. Please make a purchase first.");
+      logStep("No Stripe customer found - returning fallback");
+      return new Response(
+        JSON.stringify({
+          error: "NO_STRIPE_CUSTOMER",
+          message: "No subscription found. Please purchase a plan first to manage your billing.",
+          fallback: true,
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
     }
     
     const customerId = customers.data[0].id;
