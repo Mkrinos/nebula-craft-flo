@@ -105,6 +105,10 @@ const Billing = () => {
       const { data, error } = await supabase.functions.invoke('customer-portal');
 
       if (error) throw error;
+      if (data?.fallback || data?.error) {
+        toast.info(data.message || 'Please purchase a plan first to manage your billing.');
+        return;
+      }
       if (!data?.url) throw new Error('No portal URL received');
 
       window.open(data.url, '_blank');
