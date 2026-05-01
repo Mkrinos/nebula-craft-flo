@@ -190,8 +190,13 @@ const YoungExplorerForm = ({ onBack }: YoungExplorerFormProps) => {
     setIsSubmitting(true);
     
     try {
-      // Get current user if authenticated
+      // Require authentication to prevent abuse
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('Please sign in to submit feedback.');
+        setIsSubmitting(false);
+        return;
+      }
       
       // Insert feedback into database
       const { error } = await supabase
@@ -201,7 +206,7 @@ const YoungExplorerForm = ({ onBack }: YoungExplorerFormProps) => {
           session_id: data.sessionId,
           device_type: data.deviceType,
           language: data.language,
-          user_id: user?.id || null,
+          user_id: user.id,
           age_group: data.ageGroup || null,
           experience_rating: data.experienceRating,
           feature_ratings: data.featureRatings,
@@ -216,6 +221,11 @@ const YoungExplorerForm = ({ onBack }: YoungExplorerFormProps) => {
       
       if (error) {
         console.error('Failed to submit feedback:', error);
+        if (error.message?.includes('Daily feedback limit')) {
+          toast.error('You\'ve reached the daily feedback limit (5/day). Please try again tomorrow.');
+          setIsSubmitting(false);
+          return;
+        }
         throw error;
       }
       
