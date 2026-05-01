@@ -22,10 +22,7 @@ export function SidebarHeader() {
           <SidebarTrigger className="h-8 w-8" />
           
           <TouchLink to="/dashboard" className="flex items-center gap-2">
-            <NexusLogo size="sm" />
-            <span className="font-display text-sm font-bold text-gradient hidden sm:inline">
-              NexusTouch
-            </span>
+            <NexusLogo size="sm" showText={false} />
           </TouchLink>
 
           {/* MX2K Branding */}
