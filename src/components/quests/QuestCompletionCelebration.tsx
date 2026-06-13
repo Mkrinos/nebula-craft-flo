@@ -6,6 +6,8 @@ import { ShootingStarsExplosion } from '@/components/gamification/ShootingStarsE
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import type { Quest } from '@/hooks/useQuests';
+import { usePersona } from '@/modules/personas';
+import { Flame } from 'lucide-react';
 
 interface QuestCompletionCelebrationProps {
   quest: Quest | null;
@@ -20,12 +22,14 @@ export function QuestCompletionCelebration({
 }: QuestCompletionCelebrationProps) {
   const { playSound } = useSoundEffects();
   const { trigger } = useHapticFeedback();
+  const { activePersona, streak, awardSession } = usePersona();
   const hasTriggeredRef = useRef(false);
 
   // Trigger haptic and sound on quest completion
   useEffect(() => {
     if (quest && !hasTriggeredRef.current) {
       hasTriggeredRef.current = true;
+      awardSession();
       
       const isStoryQuest = quest.quest_type === 'story';
       const isHighReward = quest.credits_reward >= 50 || quest.xp_reward >= 100;
@@ -149,6 +153,17 @@ export function QuestCompletionCelebration({
               >
                 {quest.title}
               </motion.p>
+
+              {activePersona && (
+                <p className="text-xs text-muted-foreground mb-3 flex items-center justify-center gap-2">
+                  <span>Your guide today was <span className="font-semibold" style={{ color: activePersona.accent }}>{activePersona.shortName}</span></span>
+                  {streak.count > 0 && (
+                    <span className="inline-flex items-center gap-1 text-amber-400">
+                      <Flame className="w-3 h-3" /> {streak.count}
+                    </span>
+                  )}
+                </p>
+              )}
               
               {/* Story completion text */}
               {quest.story_complete && (

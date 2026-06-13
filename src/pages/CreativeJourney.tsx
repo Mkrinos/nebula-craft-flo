@@ -54,6 +54,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '@/components/BackButton';
+import { usePersona } from '@/modules/personas';
 
 const CreativeJourney = () => {
   const { user, session } = useAuth();
@@ -65,6 +66,7 @@ const CreativeJourney = () => {
   const { updateProgress } = useQuests();
   const haptic = useHapticFeedback();
   const navigate = useNavigate();
+  const { styleSuffix, awardAffinity } = usePersona();
   const [prompt, setPrompt] = useState('');
   const [detectedLang, setDetectedLang] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
@@ -161,7 +163,7 @@ const CreativeJourney = () => {
     try {
       const { data, error } = await supabase.functions.invoke('generate-image', {
         body: { 
-          prompt: prompt.trim(),
+          prompt: prompt.trim() + styleSuffix,
           style: selectedStyle,
           saveToGallery: saveToGallery && !!user
         }
@@ -187,6 +189,7 @@ const CreativeJourney = () => {
         if (user) {
           updateProgress('image_generation', 1);
         }
+        awardAffinity(1);
         
         if (data.cached) {
           toast.success('Image retrieved from cache - no credits used!');
