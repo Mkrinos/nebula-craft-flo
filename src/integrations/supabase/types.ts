@@ -257,7 +257,7 @@ export type Database = {
           session_id: string
           signup_likelihood: string | null
           time_spent: string | null
-          user_id: string | null
+          user_id: string
           would_return: string | null
         }
         Insert: {
@@ -298,7 +298,7 @@ export type Database = {
           session_id: string
           signup_likelihood?: string | null
           time_spent?: string | null
-          user_id?: string | null
+          user_id: string
           would_return?: string | null
         }
         Update: {
@@ -339,7 +339,7 @@ export type Database = {
           session_id?: string
           signup_likelihood?: string | null
           time_spent?: string | null
-          user_id?: string | null
+          user_id?: string
           would_return?: string | null
         }
         Relationships: []
