@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { BackButton } from '@/components/BackButton';
 import { toast } from 'sonner';
+import { usePersona } from '@/modules/personas';
 
 export default function Quests() {
   const { user } = useAuth();
@@ -43,9 +44,16 @@ export default function Quests() {
     setLoadingQuestId(null);
   };
 
+  const { awardAffinity, questContext } = usePersona();
+
   const handleClaimReward = async (questId: string) => {
     setLoadingQuestId(questId);
     await claimReward(questId);
+    awardAffinity(1);
+    if (questContext) {
+      // Persona/interest context surfaced for the quest LLM call layer.
+      (window as any).__nt_questContext = questContext;
+    }
     setLoadingQuestId(null);
     clearCompletedQuest();
   };
