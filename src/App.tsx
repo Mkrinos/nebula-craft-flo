@@ -29,6 +29,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SciFiFrame } from "@/components/ui/sci-fi-frame";
 import { SciFiButton } from "@/components/ui/sci-fi-button";
 import { AdaptivePerformanceProvider } from "@/components/AdaptivePerformanceProvider";
+import { PersonaProvider } from "@/modules/personas";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
                     <GlobalPersonaProvider>
                       <MusicProvider>
                         <AdaptivePerformanceProvider>
+                        <PersonaProvider>
                           <PersonaUIThemeBridge />
                           <TooltipProvider>
                             <Toaster />
@@ -114,6 +116,7 @@ const App = () => (
                               </FocusManager>
                             </BrowserRouter>
                           </TooltipProvider>
+                        </PersonaProvider>
                         </AdaptivePerformanceProvider>
                       </MusicProvider>
                     </GlobalPersonaProvider>
