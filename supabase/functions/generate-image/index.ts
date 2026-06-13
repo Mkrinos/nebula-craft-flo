@@ -162,31 +162,37 @@ serve(async (req) => {
     // Service role client for admin operations (storage, etc.)
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get user from auth header
-    let userId: string | null = null;
-    let userEmail: string | null = null;
-    let userClient: ReturnType<typeof createClient> | null = null;
+    // Require authentication — generate-image consumes paid AI quota and must
+    // never proceed for anonymous callers.
     const authHeader = req.headers.get("Authorization");
-    
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      
-      // Create a user-authenticated client for RPC calls that check auth.uid()
-      userClient = createClient(supabaseUrl, supabaseAnonKey, {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      });
-      
-      const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-      
-      if (!authError && user) {
-        userId = user.id;
-        userEmail = user.email || null;
-      }
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
+
+    const token = authHeader.replace("Bearer ", "");
+
+    // Create a user-authenticated client for RPC calls that check auth.uid()
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Invalid or expired session" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId: string = user.id;
+    const userEmail: string | null = user.email || null;
 
     // Check cache first if user is authenticated and caching is enabled
     if (userId && useCache) {
