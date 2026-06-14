@@ -42,6 +42,15 @@ serve(async (req) => {
 
     const { paths, bucket = "generated-images" } = await req.json();
 
+    // SECURITY: Whitelist allowed buckets to prevent probing of other buckets
+    const ALLOWED_BUCKETS = new Set(["generated-images"]);
+    if (!ALLOWED_BUCKETS.has(bucket)) {
+      return new Response(
+        JSON.stringify({ error: "Bucket not allowed" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     if (!paths || !Array.isArray(paths) || paths.length === 0) {
       return new Response(
         JSON.stringify({ error: "paths array is required" }),
@@ -83,6 +92,29 @@ serve(async (req) => {
         if (match) {
           filePath = match[1];
         }
+      }
+
+      // SECURITY: ensure caller owns the file (path must start with their uid),
+      // OR the file is referenced by a public generated_images row.
+      const firstSegment = filePath.split('/')[0];
+      let allowed = firstSegment === user.id;
+
+      if (!allowed) {
+        const fileName = filePath.split('/').pop() || '';
+        if (fileName) {
+          const { data: pubRow } = await supabaseAdmin
+            .from('generated_images')
+            .select('id')
+            .eq('is_public', true)
+            .ilike('image_url', `%${fileName}`)
+            .maybeSingle();
+          allowed = !!pubRow;
+        }
+      }
+
+      if (!allowed) {
+        errors[path] = "Forbidden";
+        continue;
       }
 
       const { data, error } = await supabaseAdmin.storage
