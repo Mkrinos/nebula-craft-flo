@@ -134,8 +134,13 @@ serve(async (req) => {
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
     const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
 
-    const fileName = `persona-avatars/${personaId}.png`;
-    
+    // SECURITY: Personas are admin-managed global records. We must NOT let any
+    // authenticated user overwrite a global persona's avatar. Only allow the
+    // database update when no avatar currently exists (first-time generation).
+    // Upload the file under a per-user path so a user can't overwrite the
+    // canonical persona-avatars/<personaId>.png file owned by an admin.
+    const fileName = `persona-avatars/${personaId}/${user.id}.png`;
+
     const { error: uploadError } = await supabase.storage
       .from("generated-images")
       .upload(fileName, binaryData, {
@@ -152,18 +157,29 @@ serve(async (req) => {
       .from("generated-images")
       .getPublicUrl(fileName);
 
-    // Update persona with avatar URL
-    const { error: updateError } = await supabase
+    // Only persist the avatar on the global persona row if it has none yet.
+    // This prevents any authenticated user from overwriting an existing
+    // admin-set avatar via this endpoint.
+    const { data: existing } = await supabase
       .from("personas")
-      .update({ avatar_url: publicUrl })
-      .eq("id", personaId);
+      .select("avatar_url")
+      .eq("id", personaId)
+      .maybeSingle();
 
-    if (updateError) {
-      console.error("Update error:", updateError);
-      throw new Error(`Failed to update persona: ${updateError.message}`);
+    if (existing && !existing.avatar_url) {
+      const { error: updateError } = await supabase
+        .from("personas")
+        .update({ avatar_url: publicUrl })
+        .eq("id", personaId)
+        .is("avatar_url", null);
+
+      if (updateError) {
+        console.error("Update error:", updateError);
+      }
     }
 
-    console.log(`Avatar saved: ${publicUrl}`);
+    console.log(`Avatar generated for user ${user.id}: ${publicUrl}`);
+
 
     return new Response(
       JSON.stringify({ avatarUrl: publicUrl }),
