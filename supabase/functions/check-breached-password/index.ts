@@ -21,6 +21,15 @@ serve(async (req) => {
   }
 
   try {
+    // SECURITY: require authentication to prevent abuse / mass enumeration.
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { password } = await req.json();
 
     if (!password || typeof password !== "string") {
