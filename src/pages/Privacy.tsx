@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { SEOHead } from '@/components/SEOHead';
 import NexusLogo from "@/components/NexusLogo";
 
 const Privacy = () => {
@@ -7,10 +8,15 @@ const Privacy = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead
+        title="Privacy Policy"
+        description="NexusTouch Privacy Policy. Learn how we protect children's data and privacy on our AI creative platform."
+        url="https://www.nexus-touch.com/privacy"
+      />
       <header className="border-b-2 border-neon-cyan/20 py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link to="/"><NexusLogo size="sm" /></Link>
-          <Link to="/" className="text-sm text-neon-cyan hover:underline">← Home</Link>
+          <Link to="/" aria-label="Back to home page" className="text-sm text-neon-cyan hover:underline">← Home</Link>
         </div>
       </header>
 
