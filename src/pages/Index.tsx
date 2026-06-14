@@ -693,7 +693,7 @@ const Index = () => {
               <Link to="/auth" className="hover:text-neon-cyan transition-colors">Sign In</Link>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground font-display uppercase tracking-wider text-center">
-              © 2024 NexusTouch. All rights reserved.
+              © 2026 NexusTouch. All rights reserved.
             </p>
           </div>
         </div>
