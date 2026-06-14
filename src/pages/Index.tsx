@@ -688,12 +688,14 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <NexusLogo size="sm" />
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
               <Link to="/feedback" className="hover:text-neon-cyan transition-colors">Feedback</Link>
               <Link to="/auth" className="hover:text-neon-cyan transition-colors">Sign In</Link>
+              <Link to="/terms" className="hover:text-neon-cyan transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="hover:text-neon-cyan transition-colors">Privacy Policy</Link>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground font-display uppercase tracking-wider text-center">
-              © 2026 NexusTouch. All rights reserved.
+              © {new Date().getFullYear()} NexusTouch. All rights reserved.
             </p>
           </div>
         </div>

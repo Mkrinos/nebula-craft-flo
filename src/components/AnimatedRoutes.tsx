@@ -24,6 +24,8 @@ import HapticSettings from '@/pages/HapticSettings';
 import Install from '@/pages/Install';
 import NotFound from '@/pages/NotFound';
 import DocumentationPDF from '@/pages/DocumentationPDF';
+import Terms from '@/pages/Terms';
+import Privacy from '@/pages/Privacy';
 import { PersonaSelectScreen, GuardianPersonaGate } from '@/modules/personas';
 
 // Direction context for page transitions
@@ -153,6 +155,8 @@ export const AnimatedRoutes: React.FC = () => {
             <Route path="/docs/pdf" element={<DocumentationPDF />} />
             <Route path="/personas/select" element={<ProtectedRoute><PageWrapper><PersonaSelectScreen /></PageWrapper></ProtectedRoute>} />
             <Route path="/guardian/personas" element={<PageWrapper><GuardianPersonaGate /></PageWrapper>} />
+            <Route path="/terms" element={<PageWrapper><Terms /></PageWrapper>} />
+            <Route path="/privacy" element={<PageWrapper><Privacy /></PageWrapper>} />
             <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
