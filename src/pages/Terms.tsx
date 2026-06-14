@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { SEOHead } from '@/components/SEOHead';
 import NexusLogo from "@/components/NexusLogo";
 
 const Terms = () => {
@@ -7,10 +8,15 @@ const Terms = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead
+        title="Terms of Service"
+        description="NexusTouch Terms of Service. Read our terms and conditions for using the AI creative platform for young creators."
+        url="https://www.nexus-touch.com/terms"
+      />
       <header className="border-b-2 border-neon-cyan/20 py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link to="/"><NexusLogo size="sm" /></Link>
-          <Link to="/" className="text-sm text-neon-cyan hover:underline">← Home</Link>
+          <Link to="/" aria-label="Back to home page" className="text-sm text-neon-cyan hover:underline">← Home</Link>
         </div>
       </header>
 
