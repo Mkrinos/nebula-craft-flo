@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { NexusLogo } from '@/components/NexusLogo';
+import NexusLogo from "@/components/NexusLogo";
 
 const Privacy = () => {
   const year = new Date().getFullYear();
