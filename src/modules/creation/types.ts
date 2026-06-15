@@ -51,6 +51,8 @@ export interface GenerateInput {
   prompt: string;
   /** Style passed through to the generator, if any */
   style?: string | null;
+  /** Map of stepId -> child-facing choice label, for the authorship summary */
+  labels?: Record<string, string>;
 }
 
 export interface GenerateResult {
@@ -60,4 +62,6 @@ export interface GenerateResult {
   error?: string;
   /** HTTP-style status hint when the call was rejected by quota */
   limitReached?: boolean;
+  /** Child-voice description of what they made, persisted into spec */
+  authorshipSummary?: string;
 }
