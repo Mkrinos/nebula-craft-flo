@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { useSignedImageUrls } from '@/hooks/useSignedImageUrl';
+import { cn } from '@/lib/utils';
 import GlassCard from './GlassCard';
 import { Button } from './ui/button';
 import { 
