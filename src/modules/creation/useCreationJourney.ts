@@ -153,7 +153,7 @@ export function useCreationJourney({
               .update({
                 child_given_name: spec.childGivenName.trim(),
                 authored_by: 'child',
-                spec: spec as unknown as Record<string, unknown>,
+                spec: JSON.parse(JSON.stringify(spec)),
               })
               .eq('id', rowId);
           }
