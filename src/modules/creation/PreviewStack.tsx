@@ -4,14 +4,16 @@ import type { CreationSpec } from './types';
 interface PreviewStackProps {
   spec: CreationSpec;
   className?: string;
+  busy?: boolean;
 }
+
 
 /**
  * Persistent preview pane. Each committed choice contributes one visible
  * layer that stacks on top of the previous ones, so the child sees their
  * creation accumulating before generation runs.
  */
-export function PreviewStack({ spec, className }: PreviewStackProps) {
+export function PreviewStack({ spec, className, busy }: PreviewStackProps) {
   return (
     <div
       className={cn(
@@ -107,6 +109,28 @@ export function PreviewStack({ spec, className }: PreviewStackProps) {
           </p>
         </div>
       )}
+
+      {/* Generation busy overlay */}
+      {busy && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="pointer-events-none absolute inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-[#0A1A3D]/55 backdrop-blur-sm"
+        >
+          <div
+            className="h-16 w-16 rounded-full border-4 border-[#5BCEFA]/25 border-t-[#5BCEFA] animate-spin"
+            style={{ animationDuration: '3s' }}
+            aria-hidden
+          />
+          <p
+            className="font-display text-sm text-[#B8A4E3] animate-pulse"
+            style={{ animationDuration: '4s' }}
+          >
+            Bringing {spec.childGivenName?.trim() || 'your creation'} to life…
+          </p>
+        </div>
+      )}
+
     </div>
   );
 }

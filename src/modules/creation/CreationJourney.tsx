@@ -195,7 +195,7 @@ export function CreationJourney({
 
       {/* RIGHT: persistent preview */}
       <div className="lg:sticky lg:top-24 lg:self-start">
-        {renderPreview ? renderPreview(j.spec) : <PreviewStack spec={j.spec} />}
+        {renderPreview ? renderPreview(j.spec) : <PreviewStack spec={j.spec} busy={j.busy} />}
       </div>
     </div>
   );
