@@ -178,6 +178,9 @@ export function CreationJourney({
             <div className="overflow-hidden rounded-2xl border border-[#5BCEFA]/40">
               <img src={j.result.image} alt={j.spec.childGivenName} className="w-full" />
             </div>
+            {j.result.authorshipSummary && (
+              <p className="text-sm text-[#B8A4E3]">{j.result.authorshipSummary}</p>
+            )}
             <button
               type="button"
               onClick={j.reset}
