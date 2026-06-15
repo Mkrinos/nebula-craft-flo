@@ -103,17 +103,16 @@ export function useCreationJourney({
     advance();
   }, [currentStep, advance]);
 
-  const assemblePrompt = useCallback((s: CreationSpec): string => {
-    const fragments: string[] = [];
+  const buildLabels = useCallback((s: CreationSpec): Record<string, string> => {
+    const labels: Record<string, string> = {};
     for (const step of definition.steps) {
       const choiceId = s.choices[step.id];
       if (!choiceId) continue;
       const choice = step.choices?.find((c) => c.id === choiceId);
-      if (choice?.promptFragment) fragments.push(choice.promptFragment);
-      else if (choice?.label) fragments.push(choice.label);
+      if (choice?.label) labels[step.id] = choice.label;
     }
-    if (s.freeText && s.freeText.trim()) fragments.push(s.freeText.trim());
-    return fragments.join(', ');
+    if (s.styleId) labels.style = s.styleId;
+    return labels;
   }, [definition]);
 
   const fireGenerate = useCallback(async () => {
@@ -125,8 +124,8 @@ export function useCreationJourney({
     setBusy(true);
     setError(null);
     try {
-      const prompt = assemblePrompt(spec);
-      const res = await generate({ spec, prompt, style: spec.styleId ?? null });
+      const labels = buildLabels(spec);
+      const res = await generate({ spec, prompt: '', style: spec.styleId ?? null, labels });
       if (res.error) {
         setError(res.error);
         setResult(res);
@@ -134,7 +133,8 @@ export function useCreationJourney({
       }
       setResult(res);
 
-      // Persist child_given_name, authored_by, spec to the most recent matching row
+      // Persist child_given_name, authored_by, and spec (with authorshipSummary
+      // nested inside the JSONB) to the most recent matching row.
       try {
         const { data: auth } = await supabase.auth.getUser();
         const userId = auth.user?.id;
@@ -143,17 +143,20 @@ export function useCreationJourney({
             .from('generated_images')
             .select('id, created_at')
             .eq('user_id', userId)
-            .ilike('prompt', prompt.toLowerCase())
             .order('created_at', { ascending: false })
             .limit(1);
           const rowId = rows?.[0]?.id;
           if (rowId) {
+            const specWithSummary = {
+              ...spec,
+              authorshipSummary: res.authorshipSummary ?? null,
+            };
             await supabase
               .from('generated_images')
               .update({
                 child_given_name: spec.childGivenName.trim(),
                 authored_by: 'child',
-                spec: JSON.parse(JSON.stringify(spec)),
+                spec: JSON.parse(JSON.stringify(specWithSummary)),
               })
               .eq('id', rowId);
           }
@@ -170,7 +173,7 @@ export function useCreationJourney({
     } finally {
       setBusy(false);
     }
-  }, [busy, result, spec, assemblePrompt, generate, onComplete]);
+  }, [busy, result, spec, buildLabels, generate, onComplete]);
 
   const progress = useMemo(
     () => ({ current: stepIndex + 1, total: steps.length }),
