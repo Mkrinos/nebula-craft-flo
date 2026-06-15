@@ -301,18 +301,21 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
       {/* Image Detail Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+          className={cn(
+            "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4",
+            isBusy && "cursor-wait"
+          )}
           onClick={handleCloseModal}
         >
           <GlassCard 
-            className="max-w-4xl w-full max-h-[90vh] overflow-auto p-6"
+            className={cn("max-w-4xl w-full max-h-[90vh] overflow-auto p-6", isBusy && "opacity-90")}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display text-lg font-semibold text-foreground">
                 Image Details
               </h3>
-              <Button variant="ghost" size="icon" onClick={handleCloseModal} className="min-h-[44px] min-w-[44px]">
+              <Button variant="ghost" size="icon" onClick={handleCloseModal} disabled={isBusy} className="min-h-[44px] min-w-[44px]">
                 <X className="w-4 h-4" />
               </Button>
             </div>
@@ -357,9 +360,14 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
                     size="sm" 
                     className="gap-2"
                     onClick={() => handleDownload(selectedImage)}
+                    disabled={isBusy}
                   >
-                    <Download className="w-4 h-4" />
-                    Download
+                    {actionInProgress === 'download' ? (
+                      <div className="w-3.5 h-3.5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {actionInProgress === 'download' ? 'Downloading...' : 'Download'}
                   </Button>
                   
                   {onSelectImage && (
@@ -367,6 +375,7 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
                       variant="neon" 
                       size="sm"
                       onClick={() => handleSelectImage(selectedImage)}
+                      disabled={isBusy}
                     >
                       Use as Reference
                     </Button>
@@ -378,9 +387,14 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
                       size="sm" 
                       className="gap-2"
                       onClick={() => handleDelete(selectedImage)}
+                      disabled={isBusy}
                     >
-                      <Trash2 className="w-4 h-4" />
-                      Delete
+                      {actionInProgress === 'delete' ? (
+                        <div className="w-3.5 h-3.5 border-2 border-destructive-foreground/30 border-t-destructive-foreground rounded-full animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                      {actionInProgress === 'delete' ? 'Deleting...' : 'Delete'}
                     </Button>
                   )}
                 </div>
