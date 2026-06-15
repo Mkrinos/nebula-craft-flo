@@ -148,31 +148,20 @@ const CreativeJourney = () => {
               <SciFiButton 
                 variant="default" 
                 shape="angled"
-                onClick={() => !generating && setShowGallery(true)}
-                disabled={generating}
+                onClick={() => setShowGallery(true)}
                 className={cn(
                   "gap-2 w-full sm:w-auto touch-target",
                   tourHighlight === 'gallery-button' && "ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse"
                 )}
               >
-                {generating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-neon-cyan/30 border-t-neon-cyan rounded-full animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <FolderOpen className="w-4 h-4" />
-                    View Gallery
-                  </>
-                )}
+                <FolderOpen className="w-4 h-4" />
+                View Gallery
               </SciFiButton>
             ) : (
               <SciFiButton 
                 variant="accent" 
                 shape="angled"
-                onClick={() => !generating && navigate('/auth')}
-                disabled={generating}
+                onClick={() => navigate('/auth')}
                 className="gap-2 w-full sm:w-auto touch-target"
               >
                 <LogIn className="w-4 h-4" />
