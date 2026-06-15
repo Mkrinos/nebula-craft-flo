@@ -550,11 +550,6 @@ const CreativeJourney = () => {
         {/* Onboarding Tour */}
         <CreativeJourneyTour onHighlight={setTourHighlight} />
         
-        {/* Credits Exhausted Dialog */}
-        <CreditsExhaustedDialog 
-          open={showCreditsExhausted} 
-          onOpenChange={setShowCreditsExhausted} 
-        />
       </div>
       </PullToRefresh>
     </SwipeablePageWrapper>
