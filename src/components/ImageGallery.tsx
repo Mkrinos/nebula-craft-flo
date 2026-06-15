@@ -204,12 +204,15 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
   if (loading) {
     return (
       <GlassCard className="p-8">
-        <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-4">
           <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground font-display uppercase tracking-wider">Loading Gallery...</p>
         </div>
       </GlassCard>
     );
   }
+
+  const isBusy = refreshing || !!actionInProgress;
 
   return (
     <GlassCard className="p-6">
@@ -217,12 +220,30 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
         <h2 className="font-display text-xl font-semibold text-foreground flex items-center gap-2">
           <ImageIcon className="w-5 h-5 text-primary" />
           Community Gallery
+          {refreshing && (
+            <span className="text-xs text-muted-foreground font-normal ml-2 flex items-center gap-1">
+              <RefreshCw className="w-3 h-3 animate-spin" />
+              Refreshing...
+            </span>
+          )}
         </h2>
-        {onClose && (
-          <Button variant="ghost" size="icon" onClick={handleClose} className="min-h-[44px] min-w-[44px]">
-            <X className="w-4 h-4" />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRefresh}
+            disabled={isBusy}
+            className="min-h-[44px] min-w-[44px]"
+            title="Refresh gallery"
+          >
+            <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
           </Button>
-        )}
+          {onClose && (
+            <Button variant="ghost" size="icon" onClick={handleClose} disabled={isBusy} className="min-h-[44px] min-w-[44px]">
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {images.length === 0 ? (
