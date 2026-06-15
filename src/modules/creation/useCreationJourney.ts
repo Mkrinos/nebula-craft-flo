@@ -200,6 +200,5 @@ export function useCreationJourney({
     goBack,
     fireGenerate,
     reset,
-    assemblePrompt,
   };
 }
