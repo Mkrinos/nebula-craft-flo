@@ -253,7 +253,7 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
           <p className="text-muted-foreground">No images yet. Be the first to create!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4", isBusy && "opacity-60 pointer-events-none")}>
           {images.map((image) => {
             let touchTriggered = false;
             return (
