@@ -55,6 +55,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '@/components/BackButton';
 import { usePersona } from '@/modules/personas';
+import { CreationJourney, generalCreateDefinition } from '@/modules/creation';
+import { invokeGenerateImage } from '@/modules/creation/generateAdapter';
 
 const CreativeJourney = () => {
   const { user, session } = useAuth();
@@ -312,7 +314,7 @@ const CreativeJourney = () => {
         <div className="min-h-screen relative">
         <SEOHead 
           title="Creative Journey - Generate AI Art"
-          description="Create stunning AI-generated images with NexusTouch. Use prompts, style presets, and personas to bring your imagination to life."
+          description="Create stunning AI-generated images with NexusTouch. Use prompts and Styles to bring your imagination to life."
         />
         <StarfieldBackground />
         <Navigation />
@@ -424,6 +426,22 @@ const CreativeJourney = () => {
               )}
             </SciFiFrame>
           )}
+
+          {/* Guided Cumulative Creation (tap-first) */}
+          <section className="mb-6 sm:mb-8 rounded-2xl border border-[#5BCEFA]/30 bg-[#0A1A3D]/60 p-4 sm:p-6">
+            <header className="mb-4">
+              <h2 className="font-display text-xl sm:text-2xl text-white">
+                Guided Creation
+              </h2>
+              <p className="text-sm text-[#B8A4E3]">
+                Tap to build, name, and claim your creation. Styles and free text are optional.
+              </p>
+            </header>
+            <CreationJourney
+              definition={generalCreateDefinition}
+              generate={invokeGenerateImage}
+            />
+          </section>
 
           {/* Showcase Video Banner */}
           <div className="mb-6 sm:mb-8">
