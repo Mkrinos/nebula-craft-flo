@@ -491,7 +491,7 @@ export type Database = {
           id: string
           parent_user_id: string
           updated_at: string
-          verification_code: string | null
+          verification_code_hash: string | null
           verification_requested_at: string | null
           verification_status: string
           verified_at: string | null
@@ -509,7 +509,7 @@ export type Database = {
           id?: string
           parent_user_id: string
           updated_at?: string
-          verification_code?: string | null
+          verification_code_hash?: string | null
           verification_requested_at?: string | null
           verification_status?: string
           verified_at?: string | null
@@ -527,7 +527,7 @@ export type Database = {
           id?: string
           parent_user_id?: string
           updated_at?: string
-          verification_code?: string | null
+          verification_code_hash?: string | null
           verification_requested_at?: string | null
           verification_status?: string
           verified_at?: string | null
@@ -1499,6 +1499,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_streaks: {
         Row: {
           current_streak: number
@@ -1693,6 +1714,13 @@ export type Database = {
       }
       generate_secure_share_code: { Args: never; Returns: string }
       get_user_subscription: { Args: { p_user_id: string }; Returns: Json }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       log_child_activity: {
         Args: {
           p_activity_details?: Json
@@ -1765,7 +1793,7 @@ export type Database = {
       update_user_streak: { Args: { p_user_id: string }; Returns: Json }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1892,6 +1920,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
