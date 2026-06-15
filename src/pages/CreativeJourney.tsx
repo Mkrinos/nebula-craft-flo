@@ -25,27 +25,13 @@ import { CreationJourney, generalCreateDefinition } from '@/modules/creation';
 import { invokeGenerateImage } from '@/modules/creation/generateAdapter';
 
 const CreativeJourney = () => {
-  const { user, session } = useAuth();
-  const { subscription, isLoading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  const { user } = useAuth();
+  const { subscription, isLoading: subscriptionLoading } = useSubscription();
   const { settings } = useMotionSettings();
-  const { detectLanguage, currentLanguage, getLanguageInfo } = useLanguage();
-  const { triggerThink, triggerReact } = useGlobalPersona();
-  const { favorites, isFavorite, toggleFavorite } = useFavoritePrompts();
-  const { updateProgress } = useQuests();
   const haptic = useHapticFeedback();
   const navigate = useNavigate();
-  const { styleSuffix, awardAffinity } = usePersona();
-  const [prompt, setPrompt] = useState('');
-  const [detectedLang, setDetectedLang] = useState<string | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
-  const [generating, setGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showGallery, setShowGallery] = useState(false);
-  const [saveToGallery, setSaveToGallery] = useState(true);
-  const [showAnimator, setShowAnimator] = useState(false);
-  const [promptCategory, setPromptCategory] = useState<PromptCategory | 'favorites'>('all');
   const [tourHighlight, setTourHighlight] = useState<string | null>(null);
-  const [showCreditsExhausted, setShowCreditsExhausted] = useState(false);
   
   // Parallax state for starfield
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
