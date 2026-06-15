@@ -346,29 +346,38 @@ export type Database = {
       }
       generated_images: {
         Row: {
+          authored_by: string | null
+          child_given_name: string | null
           created_at: string
           id: string
           image_url: string
           is_public: boolean
           prompt: string
+          spec: Json | null
           style: string | null
           user_id: string
         }
         Insert: {
+          authored_by?: string | null
+          child_given_name?: string | null
           created_at?: string
           id?: string
           image_url: string
           is_public?: boolean
           prompt: string
+          spec?: Json | null
           style?: string | null
           user_id: string
         }
         Update: {
+          authored_by?: string | null
+          child_given_name?: string | null
           created_at?: string
           id?: string
           image_url?: string
           is_public?: boolean
           prompt?: string
+          spec?: Json | null
           style?: string | null
           user_id?: string
         }
