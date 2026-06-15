@@ -96,10 +96,7 @@ const CreativeJourney = () => {
           <div className="container mx-auto max-w-7xl">
             <ImageGallery 
               onClose={() => setShowGallery(false)}
-              onSelectImage={(url, promptText) => {
-                setPrompt(promptText);
-                setShowGallery(false);
-              }}
+              onSelectImage={() => setShowGallery(false)}
             />
           </div>
         </main>
