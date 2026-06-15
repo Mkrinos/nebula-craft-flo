@@ -1,60 +1,26 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Navigation from '@/components/Navigation';
 import creativeShowcaseVideo from '@/assets/creative-journey-showcase.mp4';
 import StarfieldBackground from '@/components/StarfieldBackground';
 import ImageGallery from '@/components/ImageGallery';
-import PromptEnhancer from '@/components/PromptEnhancer';
-import ImageAnimator from '@/components/ImageAnimator';
-import VoiceInputButton from '@/components/VoiceInputButton';
-import ImageGenerationSkeleton from '@/components/ImageGenerationSkeleton';
 import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import { PerformanceDashboard } from '@/components/PerformanceDashboard';
 import { SEOHead } from '@/components/SEOHead';
 import { CreativeJourneyTour } from '@/components/creative-journey/CreativeJourneyTour';
-import { CreditsExhaustedDialog } from '@/components/CreditsExhaustedDialog';
 import { useMotionSettings } from '@/contexts/MotionSettingsContext';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { SciFiFrame } from '@/components/ui/sci-fi-frame';
-import { SciFiPanel } from '@/components/ui/sci-fi-panel';
 import { SciFiButton } from '@/components/ui/sci-fi-button';
-import { SciFiTextarea } from '@/components/ui/sci-fi-input';
 import { SciFiBadge } from '@/components/ui/sci-fi-badge';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useQuests } from '@/hooks/useQuests';
-import { useLanguage, promptPlaceholders, getPromptsByCategory, categoryLabels, categorizedPrompts, type PromptCategory } from '@/contexts/LanguageContext';
-import { useGlobalPersona } from '@/contexts/GlobalPersonaContext';
-import { useFavoritePrompts } from '@/hooks/useFavoritePrompts';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { 
-  Sparkles, 
-  Wand2, 
-  Image, 
-  Settings2, 
-  Download, 
-  Share2, 
-  Heart,
-  Maximize2,
-  RefreshCw,
-  FolderOpen,
-  Save,
-  LogIn,
-  Play,
-  Zap,
-  Globe,
-  Trees,
-  Wand2 as WandIcon,
-  Rocket,
-  Shuffle,
-  Star
-} from 'lucide-react';
+import { Sparkles, FolderOpen, LogIn, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '@/components/BackButton';
-import { usePersona } from '@/modules/personas';
 import { CreationJourney, generalCreateDefinition } from '@/modules/creation';
 import { invokeGenerateImage } from '@/modules/creation/generateAdapter';
 
