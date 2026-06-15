@@ -491,10 +491,10 @@ const CreativeJourney = () => {
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                     <SciFiBadge variant="accent" className="mb-2">
                       <Sparkles className="w-3 h-3 mr-1" />
-                      AI-Powered Creation
+                      Your Creative Studio
                     </SciFiBadge>
                     <p className="text-sm sm:text-base text-foreground/90 max-w-lg">
-                      Watch your imagination come to life with our advanced AI generation tools
+                      You direct it, step by step — every choice is yours.
                     </p>
                   </div>
                 </div>
