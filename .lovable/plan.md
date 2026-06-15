@@ -1,103 +1,93 @@
 
-# Persona Module — Implementation Plan
+## Goal
+Introduce a standalone, tap-driven cumulative creation flow that Create and Quick Generate both consume, persisting to the existing `generated_images` columns (`spec`, `child_given_name`, `authored_by`). Additive only — no schema changes, no new routes.
 
-Awaiting your confirmation before writing any code. Two items need your sign-off at the bottom.
+## Files involved (discovery)
 
-## Stack note (please confirm)
-Your brief describes Next.js 15 / React 19, but this project is **Vite + React 18 + react-router-dom**. I will follow the same architectural intent (self-contained module, context, hook, three additive hook points) using the existing stack. No framework migration.
+**(a) Create screen**
+- `src/pages/CreativeJourney.tsx` (host)
+- `src/components/creative-journey/CreativeJourneyTour.tsx`
+- `src/components/PromptEnhancer.tsx`, `ImageGenerationSkeleton.tsx`, `ImageGallery.tsx`, `VoiceInputButton.tsx`
 
----
+**(b) Quick Generate panel**
+- `src/components/dashboard/QuickGenerateWidget.tsx`
+- `src/components/dashboard/DashboardWidget.tsx` (wrapper, untouched)
 
-## 1. Asset placement & filename → persona mapping
+**(c) Image generation function**
+- `supabase/functions/generate-image/index.ts` — reused as-is; client will pass through prompt + style assembled from the spec, and also persist `spec`, `child_given_name`, `authored_by` via a follow-up update to the inserted row (the function already inserts the row keyed by `user_id` + `prompt` + recent `created_at`).
 
-Uploaded files will be placed in `public/personas/` (renamed to URL-safe form). Proposed mapping:
+**(d) Style-preset / "Personas" selector**
+- `src/hooks/usePersonas.tsx` — data source for the style choices reused on Create
+- `src/components/PersonaCard.tsx` — kept; relabelled at the Create call site only
 
-| Uploaded file | Persona id | Display name |
-|---|---|---|
-| Nova Sun-Mystic.mp4 → `public/personas/nova.mp4` | `nova` | Nova, the Sun-Mystic |
-| Ember Solar-Warrior.mp4 → `public/personas/ember.mp4` | `ember` | Ember, the Solar Warrior |
-| Lyra Soft-Dreamer.mp4 → `public/personas/lyra.mp4` | `lyra` | Lyra, the Soft Dreamer |
-| Vex Neon-Trickster.mp4 → `public/personas/vex.mp4` | `vex` | Vex, the Neon Trickster |
-| Halo Dawn-Sentinel.mp4 → `public/personas/halo.mp4` | `halo` | Halo, the Dawn Sentinel |
-| Onyx Void-Sculptor.mp4 → `public/personas/onyx.mp4` | `onyx` | Onyx, the Void Sculptor |
+**(e) Shared modules/hooks/types**
+- `src/integrations/supabase/client.ts`, `types.ts`
+- `src/hooks/useAuth.tsx`
 
-Per-persona config (style descriptor, palette accent, voice ID placeholder string, interest affinities) drafted as:
-
-- **Nova** — radiant golden mysticism · interests: space, mystery, art
-- **Ember** — bold solar action · interests: fantasy, science, animals
-- **Lyra** — soft dreamy pastel · interests: music, nature, animals
-- **Vex** — neon playful trickster · interests: art, music, mystery
-- **Halo** — luminous guardian dawn · interests: nature, fantasy, space
-- **Onyx** — cosmic shadow sculptor · interests: science, mystery, space
-
-Interest vocabulary: `animals, space, fantasy, mystery, art, science, music, nature`.
-
----
-
-## 2. New files (all inside `src/modules/personas/`)
+## New module: `src/modules/creation/`
 
 ```text
-src/modules/personas/
-  personas.config.ts          # typed PERSONAS array + INTERESTS list + types
-  PersonaContext.tsx          # provider: active persona, affinity, badges, streak; persists to localStorage under one key "nt.personas.v1"
-  usePersona.ts               # hook: { activePersona, interests, availableIds, setActive, awardAffinity, getBadges, streak }
-  PersonaSelectScreen.tsx     # child-facing grid, ordered by interest fit, tap-to-preview video, "choose this guide"
-  GuardianPersonaGate.tsx     # guardian-only config: persona availability toggles + interest checkboxes
-  badges.ts                   # thresholds (10/25/50) + per-persona badge copy
-  index.ts                    # barrel export
+src/modules/creation/
+  types.ts                 // JourneyChoice, JourneyStep, JourneyDefinition, CreationSpec
+  useCreationJourney.ts    // step index, accumulating spec, reversibility, terminal generate+save
+  CreationJourney.tsx      // <CreationJourney definition generate renderPreview onComplete/>
+  StepCardGrid.tsx         // 3-4 large tap cards, ≥44px touch targets
+  PreviewStack.tsx         // persistent preview pane; one visible layer per choice
+  ClaimStep.tsx            // required name + "I made this" claim button
+  definitions/
+    generalCreate.ts       // 7-step definition shared by Create + Quick Generate
+  index.ts
 ```
 
-Persistence: single key `nt.personas.v1` in the existing localStorage layer. Shape:
-```ts
-{ activeId, availableIds[], interests[], affinity: Record<id, number>, unlockedBadges: string[], streak: { count, lastDayISO } }
-```
+### Types (sketch)
+- `JourneyChoice { id; label; previewLayer?: { kind: 'color'|'icon'|'image'|'text'; value: string; opacity?: number } }`
+- `JourneyStep { id; hostLine: string; choices: JourneyChoice[]; allowChildText?: boolean; optional?: boolean }`
+- `JourneyDefinition { id; steps: JourneyStep[] }`
+- `CreationSpec { definitionId; choices: Record<stepId, choiceId | string>; freeText?: string; styleId?: string; childGivenName: string }`
 
-Routes registered (additive only, in `src/App.tsx` route table — this is a 4th touch; **flagging it explicitly**, see §4):
-- `/personas/select` → `PersonaSelectScreen`
-- `/guardian/personas` → `GuardianPersonaGate` (wrapped in existing guardian auth guard)
+### Hook behaviour
+- Tracks `stepIndex`, `spec`, `history` (for reversibility before claim).
+- `back()` allowed until the claim step.
+- `commit(choice)` advances; `setFreeText`, `setStyle`, `setName` for the relevant steps.
+- On claim: calls `generate(spec)` exactly once, then writes `spec`, `child_given_name`, `authored_by='child'` to the matching `generated_images` row, then `onComplete(result)`.
 
-The `PersonaProvider` will be mounted once at the app root inside the existing provider tree.
+### Persistence approach (no schema change)
+After `generate-image` resolves with `saved: true`, the client looks up the most recent row for the user matching the assembled prompt and updates `spec`, `child_given_name`, `authored_by`. This keeps the edge function untouched.
 
----
+## 7-step general definition (Create + Quick Generate)
+1. What to create (creature / place / vehicle / object)
+2. What it's like (vibe: brave / curious / silly / mysterious)
+3. Where it belongs (forest / ocean / space / city)
+4. A detail that's yours (color / pattern / accessory / power)
+5. Style (optional) — sourced from `usePersonas`, labelled "Styles"
+6. Free text (optional) — existing input, demoted to this slot
+7. Name & claim (required)
 
-## 3. Hook points in existing files (one import + one call each)
+Each choice contributes a `previewLayer` so the preview pane visibly accumulates.
 
-| File | Exact one-line change |
-|---|---|
-| **`src/pages/CreativeJourney.tsx`** (image creation) | `const { styleSuffix } = usePersona();` and append `styleSuffix` to the existing prompt string before the generate call. |
-| **`src/pages/Quests.tsx`** (quest component) | `const { questContext } = usePersona();` and pass `questContext` as an extra field in the existing LLM call body. |
-| **Session-end screen** — **need confirmation**: I could not locate a clear "session end" file. Candidates: a component inside `src/components/creative-journey/` or `src/components/quests/QuestCompletionCelebration.tsx`. **Please confirm which file is the session-end screen** (or let me grep). The one-line change will be: `const { activePersona, awardSession } = usePersona();` then call `awardSession()` on mount and render `<p>Your guide today was {activePersona.name}</p>`. |
+## Touch points in existing files (max 3)
 
-If, during implementation, any of these three files turn out to require more than the import + single call (e.g. the prompt string isn't reachable in one expression), I will stop and ask rather than expand the touch.
+1. **`src/pages/CreativeJourney.tsx`** — replace the current one-shot form with `<CreationJourney definition={generalCreate} generate={invokeGenerateImage} renderPreview={PreviewStack} onComplete={...}/>`. Keep gallery, tour, skeleton, animator dialogs. Rename the styles section label "Personas" → "Styles" here only.
+2. **`src/components/dashboard/QuickGenerateWidget.tsx`** — replace input + button with a launcher that opens `<CreationJourney>` in a dialog using the same `generalCreate` definition and the same `generate` adapter; on complete navigate to `/creative-journey` results or close with toast.
+3. **Styles rename** — local label change inside the Create surface only (same file as #1). No global rename, no changes to `usePersonas`, `PersonaCard`, or other persona modules.
 
----
+## Commerce rules
+- No credit counters, upsells, or "buy more" anywhere in the journey or claim step.
+- On a 402/403 from the generation function, show a neutral message: "This plan has reached its limit. Ask your guardian to review options." with a single action that routes the guardian (not the child) to `/billing`. No bonuses, no countdowns.
 
-## 4. Files touched outside the module — explicit list
+## Brand
+- Navy `#0A1A3D`, cyan `#5BCEFA`, lavender `#B8A4E3` used via local Tailwind classes within the new module only (no global token edits).
 
-Per your rule, flagging every existing-file touch:
+## Out of scope
+- No new migration, no edge-function edits, no routing changes, no changes to `usePersonas` data, no replacement of `ImageGallery`/`ImageAnimator`/`ImageEditDialog`.
 
-1. `src/pages/CreativeJourney.tsx` — hook point #1
-2. `src/pages/Quests.tsx` — hook point #2
-3. *(session-end file, TBD)* — hook point #3
-4. **`src/App.tsx`** — register two new routes and mount `<PersonaProvider>`. This is required to make the module reachable; it is structural registration, not behavioral change. **Please approve this 4th touch** — without it the module is unreachable.
-
-No other existing file will be modified. No schema migration. No changes to safety spine, voice integration, Kling, or image API internals.
-
----
-
-## 5. Gamification rules (inside module only)
-
-- Affinity: `awardAffinity(personaId, 1)` called by hook points on meaningful decisions (one per generate, one per quest completion, one per session end).
-- Badges: thresholds 10 / 25 / 50 per persona. Copy drafted (e.g. "Nova's First Spark", "Nova's Bright Path", "Nova's Radiant Bond") — final copy in `badges.ts`.
-- Streak: increments when `lastDayISO` is yesterday; resets silently to 1 otherwise. No loss UI.
-
----
-
-## Please confirm before I write code
-
-1. **Stack substitution** (Vite/React 18/react-router) is acceptable.
-2. **Filename → persona mapping** above is correct.
-3. **Session-end file** path (or permission to grep and pick).
-4. **`src/App.tsx` touch** for route registration + provider mount is approved.
-
-Once you confirm, I'll implement in one pass.
+## Acceptance checklist
+- `src/modules/creation/` is standalone and imports nothing Create-specific.
+- Create and Quick Generate both mount `<CreationJourney>` with the same definition.
+- Flow is tap-first; free text is optional and second-to-last; name+claim required.
+- Preview pane gains one visible layer per choice.
+- Exactly one `generate-image` call, at claim.
+- Every saved row has `spec`, `child_given_name`, `authored_by='child'`.
+- "Styles" label appears on Create where "Personas" used to.
+- No commerce UI in the flow; limit message routes guardian to billing.
+- No new SQL migration.
