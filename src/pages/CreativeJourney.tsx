@@ -1,85 +1,37 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Navigation from '@/components/Navigation';
 import creativeShowcaseVideo from '@/assets/creative-journey-showcase.mp4';
 import StarfieldBackground from '@/components/StarfieldBackground';
 import ImageGallery from '@/components/ImageGallery';
-import PromptEnhancer from '@/components/PromptEnhancer';
-import ImageAnimator from '@/components/ImageAnimator';
-import VoiceInputButton from '@/components/VoiceInputButton';
-import ImageGenerationSkeleton from '@/components/ImageGenerationSkeleton';
 import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { SwipeablePageWrapper } from '@/components/SwipeablePageWrapper';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import { PerformanceDashboard } from '@/components/PerformanceDashboard';
 import { SEOHead } from '@/components/SEOHead';
 import { CreativeJourneyTour } from '@/components/creative-journey/CreativeJourneyTour';
-import { CreditsExhaustedDialog } from '@/components/CreditsExhaustedDialog';
 import { useMotionSettings } from '@/contexts/MotionSettingsContext';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { SciFiFrame } from '@/components/ui/sci-fi-frame';
-import { SciFiPanel } from '@/components/ui/sci-fi-panel';
 import { SciFiButton } from '@/components/ui/sci-fi-button';
-import { SciFiTextarea } from '@/components/ui/sci-fi-input';
 import { SciFiBadge } from '@/components/ui/sci-fi-badge';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useQuests } from '@/hooks/useQuests';
-import { useLanguage, promptPlaceholders, getPromptsByCategory, categoryLabels, categorizedPrompts, type PromptCategory } from '@/contexts/LanguageContext';
-import { useGlobalPersona } from '@/contexts/GlobalPersonaContext';
-import { useFavoritePrompts } from '@/hooks/useFavoritePrompts';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { 
-  Sparkles, 
-  Wand2, 
-  Image, 
-  Settings2, 
-  Download, 
-  Share2, 
-  Heart,
-  Maximize2,
-  RefreshCw,
-  FolderOpen,
-  Save,
-  LogIn,
-  Play,
-  Zap,
-  Globe,
-  Trees,
-  Wand2 as WandIcon,
-  Rocket,
-  Shuffle,
-  Star
-} from 'lucide-react';
+import { Sparkles, FolderOpen, LogIn, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '@/components/BackButton';
-import { usePersona } from '@/modules/personas';
 import { CreationJourney, generalCreateDefinition } from '@/modules/creation';
 import { invokeGenerateImage } from '@/modules/creation/generateAdapter';
 
 const CreativeJourney = () => {
-  const { user, session } = useAuth();
-  const { subscription, isLoading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  const { user } = useAuth();
+  const { subscription, isLoading: subscriptionLoading } = useSubscription();
   const { settings } = useMotionSettings();
-  const { detectLanguage, currentLanguage, getLanguageInfo } = useLanguage();
-  const { triggerThink, triggerReact } = useGlobalPersona();
-  const { favorites, isFavorite, toggleFavorite } = useFavoritePrompts();
-  const { updateProgress } = useQuests();
   const haptic = useHapticFeedback();
   const navigate = useNavigate();
-  const { styleSuffix, awardAffinity } = usePersona();
-  const [prompt, setPrompt] = useState('');
-  const [detectedLang, setDetectedLang] = useState<string | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
-  const [generating, setGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showGallery, setShowGallery] = useState(false);
-  const [saveToGallery, setSaveToGallery] = useState(true);
-  const [showAnimator, setShowAnimator] = useState(false);
-  const [promptCategory, setPromptCategory] = useState<PromptCategory | 'favorites'>('all');
   const [tourHighlight, setTourHighlight] = useState<string | null>(null);
-  const [showCreditsExhausted, setShowCreditsExhausted] = useState(false);
   
   // Parallax state for starfield
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
@@ -128,164 +80,11 @@ const CreativeJourney = () => {
     setParallax({ x: 0, y: 0 });
   }, []);
 
-  // Handle prompt change with language detection
-  const handlePromptChange = (value: string) => {
-    setPrompt(value);
-    if (value.length > 10) {
-      const detected = detectLanguage(value);
-      if (detected !== currentLanguage) {
-        setDetectedLang(detected);
-      } else {
-        setDetectedLang(null);
-      }
-    }
-  };
-
-  // Handle voice input
-  const handleVoiceInput = (transcript: string) => {
-    setPrompt(prev => prev ? `${prev} ${transcript}` : transcript);
-    triggerReact();
-  };
-
-  const handleGenerate = async () => {
-    if (!prompt.trim()) return;
-    
-    // Haptic feedback on generate
-    haptic.trigger('medium');
-    
-    if (!user && saveToGallery) {
-      toast.error('Please sign in to save images to the gallery');
-      return;
-    }
-    
-    setGenerating(true);
-    setGeneratedImage(null);
-    triggerThink();
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-image', {
-        body: { 
-          prompt: prompt.trim() + styleSuffix,
-          style: selectedStyle,
-          saveToGallery: saveToGallery && !!user
-        }
-      });
-
-      if (error) throw error;
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      if (data?.image) {
-        setGeneratedImage(data.image);
-        triggerReact();
-        
-        // Haptic feedback for successful generation
-        haptic.trigger('success');
-        
-        // Immediately refresh credit display
-        refetchSubscription();
-        
-        // Update quest progress for image generation
-        if (user) {
-          updateProgress('image_generation', 1);
-        }
-        awardAffinity(1);
-        
-        if (data.cached) {
-          toast.success('Image retrieved from cache - no credits used!');
-        } else if (data.saved) {
-          // Extra celebratory haptic for saved images
-          setTimeout(() => haptic.trigger('achievement'), 300);
-          toast.success('Image generated and saved to gallery!');
-        } else {
-          toast.success('Image generated successfully!');
-        }
-      } else {
-        throw new Error('No image received');
-      }
-    } catch (error: any) {
-      console.error('Generation error:', error);
-      
-      // Check if it's a credits exhausted error
-      const errorMessage = error.message || '';
-      if (errorMessage.toLowerCase().includes('credits') || errorMessage.includes('upgrade')) {
-        haptic.trigger('error');
-        setShowCreditsExhausted(true);
-      } else {
-        haptic.trigger('warning');
-        toast.error(errorMessage || 'Failed to generate image');
-      }
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!generatedImage) return;
-    
-    haptic.trigger('success');
-    
-    try {
-      const link = document.createElement('a');
-      link.href = generatedImage;
-      link.download = `nexustouch-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success('Image downloaded!');
-    } catch (error) {
-      toast.error('Failed to download image');
-    }
-  };
-
-  const stylePresets = [
-    'Cyberpunk', 'Fantasy', 'Realistic', 'Anime', 
-    'Abstract', 'Vintage', 'Minimalist', 'Surreal'
-  ];
-
-  // Get localized quick prompts based on current language and category
-  const localizedQuickPrompts = promptCategory === 'favorites' 
-    ? favorites.map(f => f.prompt_text)
-    : getPromptsByCategory(currentLanguage, promptCategory as PromptCategory);
-
-  const categoryIcons: Record<PromptCategory | 'favorites', React.ReactNode> = {
-    all: <Sparkles className="w-3 h-3" />,
-    nature: <Trees className="w-3 h-3" />,
-    fantasy: <WandIcon className="w-3 h-3" />,
-    scifi: <Rocket className="w-3 h-3" />,
-    favorites: <Star className="w-3 h-3" />,
-  };
-
-  const extendedCategoryLabels: Record<'favorites', Record<string, string>> = {
-    favorites: {
-      en: 'Favorites', es: 'Favoritos', fr: 'Favoris', de: 'Favoriten', 
-      it: 'Preferiti', pt: 'Favoritos', ja: 'お気に入り', ko: '즐겨찾기', 
-      zh: '收藏', ar: 'المفضلة', hi: 'पसंदीदा', ru: 'Избранное'
-    }
-  };
-
-  // Random prompt picker
-  const handleRandomPrompt = () => {
-    const allPrompts = categorizedPrompts[currentLanguage] || categorizedPrompts.en;
-    if (allPrompts.length > 0) {
-      const randomIndex = Math.floor(Math.random() * allPrompts.length);
-      const randomPrompt = allPrompts[randomIndex];
-      handlePromptChange(randomPrompt.text);
-      
-      // Optionally switch to the category of the random prompt
-      setPromptCategory(randomPrompt.category);
-      
-      // Haptic feedback
-      haptic.trigger('selection');
-    }
-  };
-
   const handleRefresh = useCallback(async () => {
     await new Promise(resolve => setTimeout(resolve, 800));
     toast.success('Page refreshed');
   }, []);
+
 
   if (showGallery) {
     return (
@@ -297,10 +96,7 @@ const CreativeJourney = () => {
           <div className="container mx-auto max-w-7xl">
             <ImageGallery 
               onClose={() => setShowGallery(false)}
-              onSelectImage={(url, promptText) => {
-                setPrompt(promptText);
-                setShowGallery(false);
-              }}
+              onSelectImage={() => setShowGallery(false)}
             />
           </div>
         </main>
@@ -352,31 +148,20 @@ const CreativeJourney = () => {
               <SciFiButton 
                 variant="default" 
                 shape="angled"
-                onClick={() => !generating && setShowGallery(true)}
-                disabled={generating}
+                onClick={() => setShowGallery(true)}
                 className={cn(
                   "gap-2 w-full sm:w-auto touch-target",
                   tourHighlight === 'gallery-button' && "ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse"
                 )}
               >
-                {generating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-neon-cyan/30 border-t-neon-cyan rounded-full animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <FolderOpen className="w-4 h-4" />
-                    View Gallery
-                  </>
-                )}
+                <FolderOpen className="w-4 h-4" />
+                View Gallery
               </SciFiButton>
             ) : (
               <SciFiButton 
                 variant="accent" 
                 shape="angled"
-                onClick={() => !generating && navigate('/auth')}
-                disabled={generating}
+                onClick={() => navigate('/auth')}
                 className="gap-2 w-full sm:w-auto touch-target"
               >
                 <LogIn className="w-4 h-4" />
@@ -706,10 +491,10 @@ const CreativeJourney = () => {
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                     <SciFiBadge variant="accent" className="mb-2">
                       <Sparkles className="w-3 h-3 mr-1" />
-                      AI-Powered Creation
+                      Your Creative Studio
                     </SciFiBadge>
                     <p className="text-sm sm:text-base text-foreground/90 max-w-lg">
-                      Watch your imagination come to life with our advanced AI generation tools
+                      You direct it, step by step — every choice is yours.
                     </p>
                   </div>
                 </div>
@@ -752,371 +537,6 @@ const CreativeJourney = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-            {/* Input Section */}
-            <div className="lg:col-span-1 space-y-4 sm:space-y-6 order-2 lg:order-1">
-              <SciFiPanel 
-                title="IMAGE PROMPT" 
-                headerRight={
-                  <div className="flex items-center gap-2">
-                    <VoiceInputButton onTranscript={handleVoiceInput} />
-                    <Wand2 className="w-4 h-4 text-neon-cyan hidden sm:block" />
-                  </div>
-                }
-                className={cn(
-                  tourHighlight === 'prompt-input' && "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                )}
-              >
-                <SciFiTextarea
-                  value={prompt}
-                  onChange={(e) => handlePromptChange(e.target.value)}
-                  placeholder={promptPlaceholders[currentLanguage]}
-                  className="min-h-[100px] sm:min-h-[120px] text-base"
-                  dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}
-                />
-
-                {/* Save to Favorites Button */}
-                {user && prompt.trim() && (
-                  <div className="mt-2 flex justify-end">
-                    <button
-                      onClick={() => {
-                        haptic.trigger('selection');
-                        toggleFavorite(prompt, 'custom', currentLanguage);
-                      }}
-                      className={`flex items-center gap-1.5 px-2 py-1 text-[10px] sm:text-xs font-display uppercase tracking-wider border transition-all touch-target ${
-                        isFavorite(prompt)
-                          ? 'border-amber-500/60 bg-amber-500/20 text-amber-400'
-                          : 'border-neon-cyan/30 bg-space-dark/50 text-muted-foreground hover:border-amber-500/40 hover:text-amber-400'
-                      }`}
-                      style={{
-                        clipPath: "polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))"
-                      }}
-                    >
-                      <Star className={`w-3 h-3 ${isFavorite(prompt) ? 'fill-amber-400' : ''}`} />
-                      {isFavorite(prompt) ? 'Saved' : 'Save'}
-                    </button>
-                  </div>
-                )}
-
-                {/* Language detection indicator */}
-                {detectedLang && (
-                  <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                    <Globe className="w-3 h-3" />
-                    <span>Detected: {getLanguageInfo(detectedLang as any).nativeName}</span>
-                  </div>
-                )}
-
-                <div className="mt-3 sm:mt-4">
-                  <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <p className="text-[10px] sm:text-xs font-display uppercase tracking-widest text-muted-foreground">
-                      {currentLanguage === 'en' ? 'Quick Prompts:' : 
-                       currentLanguage === 'es' ? 'Sugerencias:' :
-                       currentLanguage === 'fr' ? 'Suggestions:' :
-                       currentLanguage === 'de' ? 'Vorschläge:' :
-                       currentLanguage === 'it' ? 'Suggerimenti:' :
-                       currentLanguage === 'pt' ? 'Sugestões:' :
-                       currentLanguage === 'ja' ? 'クイックプロンプト:' :
-                       currentLanguage === 'ko' ? '빠른 프롬프트:' :
-                       currentLanguage === 'zh' ? '快速提示:' :
-                       currentLanguage === 'ar' ? 'اقتراحات سريعة:' :
-                       currentLanguage === 'hi' ? 'त्वरित सुझाव:' :
-                       currentLanguage === 'ru' ? 'Быстрые подсказки:' : 'Quick Prompts:'}
-                    </p>
-                    
-                    {/* Random Prompt Button */}
-                    <button
-                      onClick={handleRandomPrompt}
-                      className="flex items-center gap-1 px-2 py-1 text-[10px] sm:text-xs font-display uppercase tracking-wider border border-neon-purple/40 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20 hover:border-neon-purple/60 transition-all touch-target"
-                      style={{
-                        clipPath: "polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))"
-                      }}
-                      title={currentLanguage === 'en' ? 'Random prompt' : 'Random'}
-                    >
-                      <Shuffle className="w-3 h-3" />
-                      <span className="hidden sm:inline">
-                        {currentLanguage === 'en' ? 'Random' : 
-                         currentLanguage === 'es' ? 'Aleatorio' :
-                         currentLanguage === 'fr' ? 'Aléatoire' :
-                         currentLanguage === 'de' ? 'Zufällig' :
-                         currentLanguage === 'it' ? 'Casuale' :
-                         currentLanguage === 'pt' ? 'Aleatório' :
-                         currentLanguage === 'ja' ? 'ランダム' :
-                         currentLanguage === 'ko' ? '랜덤' :
-                         currentLanguage === 'zh' ? '随机' :
-                         currentLanguage === 'ar' ? 'عشوائي' :
-                         currentLanguage === 'hi' ? 'यादृच्छिक' :
-                         currentLanguage === 'ru' ? 'Случайно' : 'Random'}
-                      </span>
-                    </button>
-                  </div>
-                  
-                  {/* Category Filter Buttons */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {(['all', 'nature', 'fantasy', 'scifi', ...(user ? ['favorites'] : [])] as (PromptCategory | 'favorites')[]).map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => {
-                          haptic.trigger('light');
-                          setPromptCategory(cat);
-                        }}
-                        className={`
-                          flex items-center gap-1 px-2 py-1 text-[10px] sm:text-xs font-display uppercase tracking-wider
-                          border transition-all touch-target
-                          ${promptCategory === cat 
-                            ? cat === 'favorites' 
-                              ? 'border-amber-500 bg-amber-500/20 text-amber-400'
-                              : 'border-neon-cyan bg-neon-cyan/20 text-neon-cyan' 
-                            : 'border-neon-cyan/30 bg-space-dark/50 text-muted-foreground hover:border-neon-cyan/50 hover:text-foreground'
-                          }
-                        `}
-                        style={{
-                          clipPath: "polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))"
-                        }}
-                      >
-                        {categoryIcons[cat]}
-                        <span>
-                          {cat === 'favorites' 
-                            ? extendedCategoryLabels.favorites[currentLanguage] || 'Favorites'
-                            : categoryLabels[cat][currentLanguage]}
-                        </span>
-                        {cat === 'favorites' && favorites.length > 0 && (
-                          <span className="ml-1 text-[9px] opacity-70">({favorites.length})</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="space-y-2 max-h-[180px] overflow-y-auto scrollbar-thin scrollbar-thumb-neon-cyan/30 scrollbar-track-transparent">
-                    {localizedQuickPrompts.map((p, i) => (
-                      <div key={i} className="flex items-center gap-1">
-                        <button
-                          onClick={() => {
-                            haptic.trigger('light');
-                            handlePromptChange(p);
-                          }}
-                          className="flex-1 text-left text-xs sm:text-sm p-2.5 sm:p-3 border border-neon-cyan/20 bg-space-dark/50 hover:bg-neon-cyan/10 hover:border-neon-cyan/40 text-foreground/80 hover:text-foreground transition-all truncate touch-target"
-                          style={{
-                            clipPath: "polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))"
-                          }}
-                          dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}
-                        >
-                          {p}
-                        </button>
-                        {user && promptCategory !== 'favorites' && (
-                          <button
-                            onClick={() => {
-                              haptic.trigger('selection');
-                              toggleFavorite(p, promptCategory === 'all' ? 'mixed' : promptCategory, currentLanguage);
-                            }}
-                            className="p-1.5 text-muted-foreground hover:text-amber-400 transition-colors touch-target"
-                            title={isFavorite(p) ? 'Remove from favorites' : 'Add to favorites'}
-                          >
-                            <Star className={`w-3.5 h-3.5 ${isFavorite(p) ? 'fill-amber-400 text-amber-400' : ''}`} />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    {localizedQuickPrompts.length === 0 && (
-                      <p className="text-xs text-muted-foreground text-center py-4">
-                        {promptCategory === 'favorites' 
-                          ? (currentLanguage === 'en' ? 'No favorites yet. Save prompts you love!' : 'No favorites saved')
-                          : (currentLanguage === 'en' ? 'No prompts in this category' : 'No prompts available')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Prompt Enhancer */}
-                <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-neon-cyan/20">
-                  <PromptEnhancer 
-                    prompt={prompt} 
-                    onEnhance={(enhanced) => handlePromptChange(enhanced)} 
-                  />
-                </div>
-              </SciFiPanel>
-
-              <SciFiPanel 
-                title="STYLE PRESETS" 
-                headerRight={<Settings2 className="w-4 h-4 text-neon-cyan" />}
-                className={cn(
-                  tourHighlight === 'style-presets' && "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                )}
-              >
-                <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {stylePresets.map((style) => (
-                    <SciFiButton
-                      key={style}
-                      variant={selectedStyle === style ? "accent" : "ghost"}
-                      size="sm"
-                      onClick={() => {
-                        haptic.trigger('light');
-                        setSelectedStyle(selectedStyle === style ? null : style);
-                      }}
-                      className="text-xs sm:text-sm px-2 sm:px-3"
-                    >
-                      {style}
-                    </SciFiButton>
-                  ))}
-                </div>
-                
-                {user && (
-                  <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-neon-cyan/20">
-                    <label className="flex items-center gap-3 cursor-pointer group touch-target">
-                      <div className={`w-5 h-5 border-2 flex items-center justify-center transition-all ${saveToGallery ? 'border-neon-cyan bg-neon-cyan/20' : 'border-neon-cyan/40'}`}>
-                        {saveToGallery && <div className="w-2 h-2 bg-neon-cyan" />}
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={saveToGallery}
-                        onChange={(e) => setSaveToGallery(e.target.checked)}
-                        className="sr-only"
-                      />
-                      <span className="text-sm text-foreground flex items-center gap-2 group-hover:text-neon-cyan transition-colors">
-                        <Save className="w-4 h-4" />
-                        Save to gallery
-                      </span>
-                    </label>
-                  </div>
-                )}
-              </SciFiPanel>
-
-              <SciFiButton 
-                variant="primary" 
-                size="xl" 
-                shape="angled"
-                className={cn(
-                  "w-full group touch-target",
-                  tourHighlight === 'generate-button' && "ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse"
-                )}
-                onClick={handleGenerate}
-                disabled={generating || !prompt.trim()}
-              >
-                {generating ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    Generate Image
-                  </>
-                )}
-              </SciFiButton>
-
-              <p className="text-center text-[10px] sm:text-xs font-display uppercase tracking-widest text-muted-foreground flex items-center justify-center gap-2">
-                <Zap className="w-3 h-3 text-neon-cyan" />
-                Powered by Lovable AI
-              </p>
-            </div>
-
-            <div className={cn(
-              "lg:col-span-2 order-1 lg:order-2",
-              tourHighlight === 'output-area' && "ring-2 ring-primary ring-offset-2 ring-offset-background rounded-lg"
-            )}>
-              <SciFiFrame 
-                glowIntensity={generatedImage ? 'medium' : 'subtle'} 
-                animated 
-                className="p-3 sm:p-6 h-full"
-              >
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h2 className="font-display text-xs sm:text-sm uppercase tracking-widest text-foreground flex items-center gap-2">
-                    <Image className="w-3 h-3 sm:w-4 sm:h-4 text-neon-cyan" />
-                    <span className="hidden xs:inline">Generated Artwork</span>
-                    <span className="xs:hidden">Artwork</span>
-                  </h2>
-                  
-                  {generatedImage && (
-                    <div className="flex items-center gap-1 sm:gap-2">
-                      <SciFiButton 
-                        variant={showAnimator ? "accent" : "ghost"} 
-                        size="icon"
-                        onClick={() => {
-                          haptic.trigger('selection');
-                          setShowAnimator(!showAnimator);
-                        }}
-                        title="Animate image"
-                        className="w-8 h-8 sm:w-9 sm:h-9"
-                      >
-                        <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      </SciFiButton>
-                      <SciFiButton variant="ghost" size="icon" className="w-8 h-8 sm:w-9 sm:h-9 hidden sm:flex">
-                        <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      </SciFiButton>
-                      <SciFiButton variant="ghost" size="icon" className="w-8 h-8 sm:w-9 sm:h-9 hidden sm:flex">
-                        <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      </SciFiButton>
-                      <SciFiButton variant="ghost" size="icon" onClick={handleDownload} className="w-8 h-8 sm:w-9 sm:h-9">
-                        <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      </SciFiButton>
-                      <SciFiButton variant="ghost" size="icon" className="w-8 h-8 sm:w-9 sm:h-9 hidden sm:flex">
-                        <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      </SciFiButton>
-                    </div>
-                  )}
-                </div>
-
-                <div 
-                  className="aspect-square border-2 border-neon-cyan/30 bg-space-dark/50 flex items-center justify-center overflow-hidden"
-                  style={{
-                    clipPath: "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px))"
-                  }}
-                >
-                {generating ? (
-                    <ImageGenerationSkeleton />
-                  ) : generatedImage ? (
-                    showAnimator ? (
-                      <div className="w-full h-full p-2 sm:p-4">
-                        <ImageAnimator imageUrl={generatedImage} prompt={prompt} />
-                      </div>
-                    ) : (
-                      <div className="relative w-full h-full group">
-                        <img 
-                          src={generatedImage} 
-                          alt="Generated artwork"
-                          className="w-full h-full object-contain"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-space-dark/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 lg:transition-opacity flex items-end p-3 sm:p-4">
-                          <p className="text-xs sm:text-sm text-foreground line-clamp-2">{prompt}</p>
-                        </div>
-                      </div>
-                    )
-                  ) : (
-                    <div className="text-center p-4 sm:p-8">
-                      <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 border-2 border-neon-cyan/40 bg-neon-cyan/10 flex items-center justify-center">
-                        <Sparkles className="w-8 h-8 sm:w-12 sm:h-12 text-neon-cyan" />
-                      </div>
-                      <h3 className="font-display text-base sm:text-xl text-foreground mb-1 sm:mb-2">
-                        Start Your Creative Journey
-                      </h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto">
-                        Enter a detailed prompt and let AI transform your vision into stunning artwork
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {generatedImage && (
-                  <div className="mt-4 flex items-center justify-between">
-                    <SciFiButton 
-                      variant="default" 
-                      size="sm"
-                      shape="angled" 
-                      className="gap-2"
-                      onClick={handleGenerate}
-                      disabled={generating}
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                      Regenerate
-                    </SciFiButton>
-                    {selectedStyle && (
-                      <SciFiBadge variant="accent">{selectedStyle}</SciFiBadge>
-                    )}
-                  </div>
-                )}
-              </SciFiFrame>
-            </div>
-          </div>
         </div>
       </main>
       
@@ -1130,11 +550,6 @@ const CreativeJourney = () => {
         {/* Onboarding Tour */}
         <CreativeJourneyTour onHighlight={setTourHighlight} />
         
-        {/* Credits Exhausted Dialog */}
-        <CreditsExhaustedDialog 
-          open={showCreditsExhausted} 
-          onOpenChange={setShowCreditsExhausted} 
-        />
       </div>
       </PullToRefresh>
     </SwipeablePageWrapper>
