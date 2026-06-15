@@ -280,6 +280,11 @@ const CreativeJourney = () => {
     }
   };
 
+  const handleRefresh = useCallback(async () => {
+    await new Promise(resolve => setTimeout(resolve, 800));
+    toast.success('Page refreshed');
+  }, []);
+
   if (showGallery) {
     return (
       <div className="min-h-screen relative">
@@ -300,11 +305,6 @@ const CreativeJourney = () => {
       </div>
     );
   }
-
-  const handleRefresh = useCallback(async () => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    toast.success('Page refreshed');
-  }, []);
 
   return (
     <SwipeablePageWrapper>
