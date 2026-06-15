@@ -38,11 +38,14 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
   const haptic = useHapticFeedback();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
+  const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
   // Get signed URLs for all images
   const imageUrls = useMemo(() => images.map(img => img.image_url), [images]);
   const { getSignedUrl } = useSignedImageUrls(imageUrls);
+
   useEffect(() => {
     fetchImages();
 
@@ -67,7 +70,12 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
     };
   }, []);
 
-  const fetchImages = async () => {
+  const fetchImages = async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     try {
       const { data, error } = await supabase
         .from('generated_images')
@@ -105,7 +113,14 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
       toast.error('Failed to load gallery');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    haptic.trigger('medium');
+    await fetchImages(true);
+    toast.success('Gallery refreshed');
   };
 
   const handleDelete = async (image: GeneratedImage) => {
@@ -115,6 +130,8 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
       return;
     }
 
+    if (actionInProgress) return;
+    setActionInProgress('delete');
     haptic.trigger('warning');
     try {
       const { error } = await supabase
@@ -130,10 +147,14 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
       console.error('Error deleting image:', error);
       haptic.trigger('error');
       toast.error('Failed to delete image');
+    } finally {
+      setActionInProgress(null);
     }
   };
 
   const handleDownload = async (image: GeneratedImage) => {
+    if (actionInProgress) return;
+    setActionInProgress('download');
     haptic.trigger('selection');
     try {
       const signedUrl = getSignedUrl(image.image_url);
@@ -149,25 +170,31 @@ const ImageGallery = ({ onClose, onSelectImage }: ImageGalleryProps) => {
     } catch (error) {
       haptic.trigger('error');
       toast.error('Failed to download image');
+    } finally {
+      setActionInProgress(null);
     }
   };
 
   const handleImageClick = (image: GeneratedImage) => {
+    if (actionInProgress) return;
     haptic.trigger('light');
     setSelectedImage(image);
   };
 
   const handleCloseModal = () => {
+    if (actionInProgress) return;
     haptic.trigger('light');
     setSelectedImage(null);
   };
 
   const handleClose = () => {
+    if (actionInProgress) return;
     haptic.trigger('light');
     onClose?.();
   };
 
   const handleSelectImage = (image: GeneratedImage) => {
+    if (actionInProgress) return;
     haptic.trigger('selection');
     const signedUrl = getSignedUrl(image.image_url);
     onSelectImage?.(signedUrl, image.prompt);
