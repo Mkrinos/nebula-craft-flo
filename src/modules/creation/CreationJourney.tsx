@@ -28,15 +28,158 @@ export function CreationJourney({
   definition,
   generate,
   onComplete,
+  onViewGallery,
   renderPreview,
 }: CreationJourneyProps) {
   const navigate = useNavigate();
   const j = useCreationJourney({ definition, generate, onComplete });
   const step = j.currentStep;
+  const revealHeadingRef = useRef<HTMLHeadingElement | null>(null);
+
+  const limitReached = j.result?.limitReached;
+  const hasSuccess = !!(j.result && j.result.image && !j.result.error);
+  const hasFailure = !!(j.result && !j.result.image && !limitReached);
+
+  useEffect(() => {
+    if (hasSuccess && revealHeadingRef.current) {
+      revealHeadingRef.current.focus();
+    }
+  }, [hasSuccess]);
 
   if (!step) return null;
 
-  const limitReached = j.result?.limitReached;
+  // ============================================================
+  // REVEAL STAGE — takes over the layout once generation finishes
+  // ============================================================
+  if (j.result) {
+    return (
+      <div className="mx-auto w-full max-w-2xl animate-in fade-in duration-500">
+        {/* SUCCESS */}
+        {hasSuccess && (
+          <section
+            role="region"
+            aria-label="Your creation"
+            className="flex flex-col items-center gap-5 text-center"
+          >
+            <h2
+              ref={revealHeadingRef}
+              tabIndex={-1}
+              className="font-display text-4xl text-white outline-none sm:text-5xl"
+            >
+              {j.spec.childGivenName || 'Your creation'}
+            </h2>
+
+            <div className="w-full overflow-hidden rounded-3xl border-2 border-[#5BCEFA]/40 bg-[#0A1A3D] shadow-[0_0_60px_rgba(91,206,250,0.25)]">
+              <img
+                src={j.result!.image}
+                alt={j.spec.childGivenName || 'Your creation'}
+                className="aspect-square w-full object-contain"
+              />
+            </div>
+
+            <p className="max-w-xl text-base text-[#B8A4E3] sm:text-lg">
+              {j.result!.authorshipSummary || 'You made this.'}
+            </p>
+
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  if (onViewGallery) onViewGallery();
+                  else navigate('/creative-journey');
+                }}
+                className={cn(
+                  'rounded-xl bg-[#5BCEFA] px-6 py-3 font-display text-[#0A1A3D]',
+                  'hover:brightness-110 active:scale-[0.98]',
+                )}
+                style={{ minHeight: 48, touchAction: 'manipulation' }}
+              >
+                View in Gallery
+              </button>
+              <button
+                type="button"
+                onClick={j.reset}
+                className={cn(
+                  'rounded-xl border-2 border-[#5BCEFA]/40 px-6 py-3 font-display text-[#B8A4E3]',
+                  'hover:border-[#5BCEFA] hover:text-white active:scale-[0.98]',
+                )}
+                style={{ minHeight: 48, touchAction: 'manipulation' }}
+              >
+                Make another
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* FAILURE (non-limit) */}
+        {hasFailure && (
+          <section
+            role="alert"
+            className="space-y-4 rounded-2xl border border-[#B8A4E3]/40 bg-[#0A1A3D]/80 p-6 text-center"
+          >
+            <h2 className="font-display text-2xl text-white sm:text-3xl">
+              That didn't come through
+            </h2>
+            <p className="text-[#B8A4E3]">
+              {j.error || "Something interrupted the spark. Let's try again."}
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={j.retryGenerate}
+                disabled={j.busy}
+                className={cn(
+                  'rounded-xl bg-[#5BCEFA] px-6 py-3 font-display text-[#0A1A3D]',
+                  'hover:brightness-110 active:scale-[0.98] disabled:opacity-50',
+                )}
+                style={{ minHeight: 48, touchAction: 'manipulation' }}
+              >
+                {j.busy ? 'Trying again…' : 'Retry'}
+              </button>
+              <button
+                type="button"
+                onClick={j.reset}
+                className="rounded-xl border-2 border-[#5BCEFA]/40 px-6 py-3 font-display text-[#B8A4E3] hover:border-[#5BCEFA] hover:text-white"
+                style={{ minHeight: 48, touchAction: 'manipulation' }}
+              >
+                Start over
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* LIMIT REACHED */}
+        {limitReached && (
+          <section className="space-y-4 rounded-2xl border border-[#B8A4E3]/40 bg-[#0A1A3D]/80 p-6 text-center">
+            <h2 className="font-display text-2xl text-white">
+              This plan has reached its limit
+            </h2>
+            <p className="text-[#B8A4E3]">
+              Ask your guardian to review options when you're ready.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => navigate('/billing')}
+                className="rounded-xl bg-[#5BCEFA] px-6 py-3 font-display text-[#0A1A3D] hover:brightness-110"
+                style={{ minHeight: 48, touchAction: 'manipulation' }}
+              >
+                Guardian: review plan
+              </button>
+              <button
+                type="button"
+                onClick={j.reset}
+                className="rounded-xl border-2 border-[#5BCEFA]/40 px-6 py-3 font-display text-[#B8A4E3] hover:border-[#5BCEFA] hover:text-white"
+                style={{ minHeight: 48, touchAction: 'manipulation' }}
+              >
+                Start over
+              </button>
+            </div>
+          </section>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_minmax(0,420px)]">
