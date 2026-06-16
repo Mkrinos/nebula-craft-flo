@@ -175,6 +175,15 @@ export function useCreationJourney({
     }
   }, [busy, result, spec, buildLabels, generate, onComplete]);
 
+  const retryGenerate = useCallback(async () => {
+    setResult(null);
+    setError(null);
+    // Defer one tick so state lands before re-firing
+    setTimeout(() => {
+      void fireGenerate();
+    }, 0);
+  }, [fireGenerate]);
+
   const progress = useMemo(
     () => ({ current: stepIndex + 1, total: steps.length }),
     [stepIndex, steps.length],
