@@ -37,7 +37,13 @@ export function ClaimStep({ initialName = '', onClaim, busy, disabled }: ClaimSt
       <button
         type="button"
         disabled={!ready}
-        onClick={() => ready && onClaim(trimmed)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (ready) onClaim(trimmed);
+        }}
+        onPointerDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
         className={cn(
           'w-full rounded-2xl px-6 py-4 font-display text-lg uppercase tracking-wider',
           'bg-[#5BCEFA] text-[#0A1A3D] transition-all',

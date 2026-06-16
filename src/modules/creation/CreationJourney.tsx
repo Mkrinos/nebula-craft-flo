@@ -288,10 +288,11 @@ export function CreationJourney({
           <ClaimStep
             initialName={j.spec.childGivenName}
             busy={j.busy}
+            disabled={!!j.result}
             onClaim={(name) => {
               j.setName(name);
-              // Defer one tick so state lands before generating
-              setTimeout(() => j.fireGenerate(), 0);
+              // Pass the name directly to avoid a setState race
+              void j.fireGenerate(name);
             }}
           />
         )}

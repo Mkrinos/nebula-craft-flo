@@ -115,17 +115,21 @@ export function useCreationJourney({
     return labels;
   }, [definition]);
 
-  const fireGenerate = useCallback(async () => {
+  const fireGenerate = useCallback(async (nameOverride?: string) => {
     if (busy || result) return;
-    if (!spec.childGivenName.trim()) {
+    const effectiveName = (nameOverride ?? spec.childGivenName ?? '').trim();
+    if (!effectiveName) {
       setError('Please name your creation first.');
       return;
     }
+    const specForGen: CreationSpec = nameOverride
+      ? { ...spec, childGivenName: effectiveName }
+      : spec;
     setBusy(true);
     setError(null);
     try {
-      const labels = buildLabels(spec);
-      const res = await generate({ spec, prompt: '', style: spec.styleId ?? null, labels });
+      const labels = buildLabels(specForGen);
+      const res = await generate({ spec: specForGen, prompt: '', style: specForGen.styleId ?? null, labels });
       if (res.error) {
         setError(res.error);
         setResult(res);
@@ -148,13 +152,13 @@ export function useCreationJourney({
           const rowId = rows?.[0]?.id;
           if (rowId) {
             const specWithSummary = {
-              ...spec,
+              ...specForGen,
               authorshipSummary: res.authorshipSummary ?? null,
             };
             await supabase
               .from('generated_images')
               .update({
-                child_given_name: spec.childGivenName.trim(),
+                child_given_name: effectiveName,
                 authored_by: 'child',
                 spec: JSON.parse(JSON.stringify(specWithSummary)),
               })
@@ -165,7 +169,7 @@ export function useCreationJourney({
         console.warn('Spec persistence skipped:', persistErr);
       }
 
-      onComplete?.(res, spec);
+      onComplete?.(res, specForGen);
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Generation failed';
       setError(msg);
