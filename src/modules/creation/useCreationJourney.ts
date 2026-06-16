@@ -208,6 +208,7 @@ export function useCreationJourney({
     skipStep,
     goBack,
     fireGenerate,
+    retryGenerate,
     reset,
   };
 }
