@@ -225,6 +225,7 @@ const CreativeJourney = () => {
             <CreationJourney
               definition={generalCreateDefinition}
               generate={invokeGenerateImage}
+              onViewGallery={() => setShowGallery(true)}
             />
           </section>
 
