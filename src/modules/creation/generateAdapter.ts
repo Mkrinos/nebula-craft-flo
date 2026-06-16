@@ -23,13 +23,26 @@ export const invokeGenerateImage: GenerateFn = async ({ spec, labels }) => {
   });
 
   if (error) {
-    const message = error.message || 'Generation failed';
-    const limitReached = /limit|credit|quota|402|403/i.test(message);
-    return { image: '', error: message, limitReached, authorshipSummary };
+    let detail = error.message || 'Generation failed';
+    // supabase.functions.invoke stashes the underlying Response on `context`.
+    // The JSON body holds the real `{ error: "..." }` message from the edge fn.
+    try {
+      const ctx = (error as unknown as { context?: Response }).context;
+      if (ctx && typeof ctx.json === 'function') {
+        const body = await ctx.clone().json().catch(() => null);
+        if (body && typeof body.error === 'string' && body.error.trim()) {
+          detail = body.error;
+        }
+      }
+    } catch {
+      /* keep generic message */
+    }
+    const limitReached = /limit|credit|quota|upgrade|plan|402|403/i.test(detail);
+    return { image: '', error: detail, limitReached, authorshipSummary };
   }
 
   if (data?.error) {
-    const limitReached = /limit|credit|quota|upgrade/i.test(data.error);
+    const limitReached = /limit|credit|quota|upgrade|plan/i.test(data.error);
     return { image: '', error: data.error, limitReached, authorshipSummary };
   }
 
