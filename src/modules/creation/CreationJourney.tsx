@@ -296,44 +296,9 @@ export function CreationJourney({
           />
         )}
 
-        {j.error && !limitReached && (
+        {j.error && !j.result && (
           <div className="rounded-xl border border-[#B8A4E3]/40 bg-[#0A1A3D]/80 p-4 text-sm text-[#B8A4E3]">
             {j.error}
-          </div>
-        )}
-
-        {limitReached && (
-          <div className="space-y-3 rounded-xl border border-[#B8A4E3]/40 bg-[#0A1A3D]/80 p-4 text-sm text-[#B8A4E3]">
-            <p>
-              This plan has reached its limit for now. Ask your guardian to review options.
-            </p>
-            <button
-              type="button"
-              onClick={() => navigate('/billing')}
-              className="rounded-lg bg-[#5BCEFA] px-4 py-2 text-[#0A1A3D]"
-              style={{ minHeight: 44 }}
-            >
-              Guardian: review plan
-            </button>
-          </div>
-        )}
-
-        {j.result && j.result.image && !j.error && (
-          <div className="space-y-3">
-            <div className="overflow-hidden rounded-2xl border border-[#5BCEFA]/40">
-              <img src={j.result.image} alt={j.spec.childGivenName} className="w-full" />
-            </div>
-            {j.result.authorshipSummary && (
-              <p className="text-sm text-[#B8A4E3]">{j.result.authorshipSummary}</p>
-            )}
-            <button
-              type="button"
-              onClick={j.reset}
-              className="w-full rounded-xl border-2 border-[#5BCEFA]/30 px-5 py-3 text-[#B8A4E3] hover:border-[#5BCEFA]"
-              style={{ minHeight: 48 }}
-            >
-              Make another
-            </button>
           </div>
         )}
       </div>
