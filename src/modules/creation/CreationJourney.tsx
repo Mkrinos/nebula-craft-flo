@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useCreationJourney, type GenerateFn } from './useCreationJourney';
@@ -10,6 +11,7 @@ interface CreationJourneyProps {
   definition: JourneyDefinition;
   generate: GenerateFn;
   onComplete?: (result: GenerateResult, spec: CreationSpec) => void;
+  onViewGallery?: () => void;
   renderPreview?: (spec: CreationSpec) => React.ReactNode;
 }
 
