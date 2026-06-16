@@ -89,7 +89,7 @@ async function checkAndNotifyLowCredits(
 }
 
 // Input validation constants
-const MAX_PROMPT_LENGTH = 500;
+const MAX_PROMPT_LENGTH = 4000;
 const MIN_PROMPT_LENGTH = 3;
 const ALLOWED_STYLES = ['anime', 'cartoon', 'realistic', 'watercolor', 'pixel-art', 'fantasy', 'sci-fi', 'abstract', 'minimalist', null, undefined, ''];
 
